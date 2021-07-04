@@ -73,6 +73,22 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
     );
   };
 
+  const renderEnvVarsSection = () => {
+    if (environment.hosting) {
+      return (
+        <div className={classes.section}>
+          <Typography className={classes.label}>
+            Environment variables
+          </Typography>
+          <div className={classes.envVars}>
+            {renderEnvVars()}
+          </div>
+          {renderAddEnvVar()}
+        </div>
+      );
+    }
+  }
+
   const renderEnvironments = () => {
     return app.fetched_environments.map(e => {
       const color = e.environment === environment.environment
@@ -160,20 +176,16 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
 
           </div>
 
-          <div className={classes.section}>
-            <Typography className={classes.label}>
-              Environment variables
-            </Typography>
-            <div className={classes.envVars}>
-              {renderEnvVars()}
-            </div>
-            {renderAddEnvVar()}
-          </div>
+          {renderEnvVarsSection()}
 
-          <Https
-          addHttpsListener={addHttpsListener}
-            certificates={certificates}
-          />
+          {environment.hosting && (
+            <Https
+              addHttpsListener={addHttpsListener}
+              certificates={certificates}
+              hosting={environment.hosting}
+            />
+          )}
+          
         </div>
       </div>
     </div>

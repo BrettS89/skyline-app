@@ -1,23 +1,20 @@
 import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles({
-  kvpContainer: {
-    display: 'flex',
-  },
-  key: {
-    color: 'grey',
-    marginRight: 50,
-    width: 50,
-  },
-});
-
-const KeyValue = ({ keyText, value }) => {
-  const classes = useStyles();
+const KeyValue = ({ keyText, value, width=50, marginRight=50 }) => {
+  const styles = {
+    kvpContainer: {
+      display: 'flex',
+    },
+    key: {
+      color: 'grey',
+      marginRight: marginRight,
+      width: width,
+    },
+  }
 
   return (
-    <div className={classes.kvpContainer}>
-      <Typography className={classes.key}>{keyText}</Typography>
+    <div style={styles.kvpContainer}>
+      <Typography style={styles.key}>{keyText}</Typography>
       <Typography>{value}</Typography>
     </div>
   );

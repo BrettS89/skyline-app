@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Button, TextField, Typography } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import KeyValue from '../../../../components/key-value';
 import useStyles from '../styles';
 
-const Https = ({ addHttpsListener, certificates }) => {
+const Https = ({ addHttpsListener, certificates, hosting }) => {
   const classes = useStyles();
 
   const [selectedCertificate, setSelectedCertificate] = useState(null);
@@ -45,13 +46,31 @@ const Https = ({ addHttpsListener, certificates }) => {
     </>
   );
 
+  const renderView = () => (
+    <>
+      <KeyValue
+        keyText='SSL certificate arn:'
+        value={hosting.ssl_certificate_arn.trim()}
+        width={140}
+        marginRight={5}
+      />
+    </>
+  );
+
+  const renderHttps = () => {
+    if (hosting.ssl_certificate_arn) {
+      return renderView();
+    }
+
+    return renderSelect();
+  }
+
   return (
     <div className={classes.section}>
       <Typography className={classes.label}>
         Https
       </Typography>
-
-      {renderSelect()}
+      {renderHttps()}
     </div>
   );
 };
