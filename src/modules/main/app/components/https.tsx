@@ -57,9 +57,19 @@ const Https = ({ addHttpsListener, certificates, hosting }) => {
     </>
   );
 
+  const renderSingleInstance = () => (
+    <>
+      <Typography>
+        SSL certificates not avaiable to configure with single instance deployments.
+      </Typography>
+    </>
+  );
+
   const renderHttps = () => {
     if (hosting.ssl_certificate_arn) {
       return renderView();
+    } else if (!hosting.autoscale) {
+      return renderSingleInstance();
     }
 
     return renderSelect();

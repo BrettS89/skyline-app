@@ -8,6 +8,8 @@ import View from './view';
 import api from '../../../feathers';
 
 const App = (props: any) => {
+  console.log(process.env);
+
   const dispatch = useDispatch();
   const app_id = props.match.params.id;
   const user = useSelector((state: StoreState) => state.user);

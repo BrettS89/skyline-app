@@ -194,10 +194,8 @@ function * connectGithubHandler({ payload }: ConnectGithubProps) {
     const fn = () => api.service('github/client-id').find();
     const { client_id } = yield call(fn);
     //@ts-ignore
-    window.location = `https://github.com/login/oauth/authorize?client_id=${client_id}&redirect_uri=https://251c13a4c081.ngrok.io/apps/${payload}&state=scsa&scope=repo%20admin:repo_hook`
-  
+    window.location = `https://github.com/login/oauth/authorize?client_id=${client_id}&redirect_uri=${process.env.REACT_APP_GITHUB_REDIRECT_URL}${payload}&state=scsa&scope=repo%20admin:repo_hook`;
   } catch(e) {
-    
   }
 }
 
@@ -337,6 +335,7 @@ function * deleteAppHandler({ payload }: DeleteAppProps) {
 
     yield put({ type: ActionTypes.SET_MY_APPS, payload: updatedApps });
   } catch(e) {
+    console.log(e);
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
   }
 }
