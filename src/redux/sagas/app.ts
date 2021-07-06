@@ -61,7 +61,7 @@ function * getMyAppsHandler() {
         user_id: user.details._id,
         $sort: { createdAt: -1 },
         $resolve: {
-          fetched_environments: true,
+          environments: true,
         },
       },
     });
@@ -104,29 +104,37 @@ function * createAppHandler({ payload }: CreateApp) {
       )));
     }
 
-    const fn = () => {
-      return api.service('aws/app').create({
-        user_id: user.details._id,
-        account_id: user.details.account_id || null,
-        name: payload.name,
-        environments: data.map(d => {
-          return {
+    const createEnvironments = () => {
+      return Promise.all(data.map(d => {
+        return api
+          .service('aws/environment')
+          .create({
             environment: d.environment,
             bucket_id: d.bucket?._id || null,
             cloudfront_id: d.cloudfront?._id || null,
             iam_user_id: d.iamUser?._id || null,
             policy_id: d.policy?._id || null,
             access_keys_id: d.accessKeys?._id || null,
-          };
-        }),
+          });
+      }));
+    };
+
+    const environments = yield call(createEnvironments);
+
+    const createApp = () => {
+      return api.service('aws/app').create({
+        user_id: user.details._id,
+        account_id: user.details.account_id || null,
+        name: payload.name,
+        environment_ids: environments.map(e => e._id),
       }, {
         query: {
-          $resolve: { fetched_environments: true },
+          $resolve: { environments: true },
         },
       });
     };
 
-    const createdApp = yield call(fn);
+    const createdApp = yield call(createApp);
 
     const updatedApps = [createdApp, ...app.myApps];
 
@@ -158,25 +166,18 @@ function * addEnvVarsHandler ({ payload }: AddEnvVarsProps) {
   try {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
 
-    const fn = () => api.service('aws/app').patch(payload.app_id, {
-      environment_id: payload.environment_id,
-      env_vars: payload.env_vars,
-      remove: payload.remove,
-    }, { query: { $resolve: { fetched_environments: true, } } });
+    const fn = () => api
+      .service('aws/environment')
+      .patch(payload.environment_id, {
+        env_vars: payload.env_vars,
+        remove: payload.remove,
+      });
 
-    const patchedApp = yield call(fn);
+    yield call(fn);
 
-    const app: AppState = yield select(appSelector);
-
-    const updatedApps = app.myApps.map(a => {
-      if (a._id === patchedApp._id) {
-        return patchedApp;
-      }
-
-      return a;
+    yield put({
+      type: ActionTypes.GET_MY_APPS,
     });
-
-    yield put({ type: ActionTypes.SET_MY_APPS, payload: updatedApps });
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
   } catch(e) {
@@ -261,44 +262,23 @@ function * terminateHostingHandler({ payload }: TerminateHostingProps) {
   try {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
 
-    const app: AppState = yield select(appSelector);
-
     const removeHosting = () => api
       .service('aws/hosting')
       .remove(payload.hosting_id);
 
     yield call(removeHosting);
 
-    const updatedEnvironments = app.myApps
-      .find(a => a._id === payload.app_id)
-      .environments
-        .map(env => {
-          if (env._id === payload.environment_id) {
-            return {
-              ...env,
-              hosting_id: null,
-            };
-          }
-          return env;
-        });
+    const patchEnvironment = () => api
+      .service('aws/environment')
+      .patch(payload.environment_id, {
+        hosting_id: null,
+      });
 
-    const patchApp = () => api
-      .service('aws/app')
-      .patch(
-        payload.app_id,
-        { environments: updatedEnvironments },
-        { query: { $resolve: { fetched_environments: true } } }
-      );
+    yield call(patchEnvironment);
 
-    const patchedApp = yield call(patchApp);
-
-    const updatedAppState = app.myApps.map(a => {
-      return a._id === patchedApp._id
-        ? patchedApp
-        : a;
+    yield put({
+      type: ActionTypes.GET_MY_APPS,
     });
-
-    yield put({ type: ActionTypes.SET_MY_APPS, payload: updatedAppState });
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
   } catch(e) {
@@ -355,9 +335,6 @@ function * addHttpsListenerHandler({ payload }: AddHttpsListener) {
   try {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
 
-    const app: AppState = yield select(appSelector);
-    const foundApp = app.myApps.find(a => a._id === payload.app_id);
-
     const fn = () => api
       .service('aws/hosting')
       .patch(payload.hosting_id, {
@@ -365,24 +342,11 @@ function * addHttpsListenerHandler({ payload }: AddHttpsListener) {
         ssl_certificate_arn: payload.ssl_certificate_arn,
       });
 
-    const res = yield call(fn);
-    console.log(res);
-    foundApp.fetched_environments = foundApp.fetched_environments.map(env => {
-      if (env._id !== payload.environment_id) return env;
+    yield call(fn);
 
-      return {
-        ...env,
-        hosting: res,
-      };
+    yield put({
+      type: ActionTypes.GET_MY_APPS,
     });
-
-    const updatedApps = app.myApps.map(a => {
-      return a._id === foundApp._id
-        ? foundApp
-        : a;
-    });
-
-    yield put({ type: ActionTypes.SET_MY_APPS, payload: updatedApps });
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
   } catch(e) {

@@ -8,8 +8,6 @@ import View from './view';
 import api from '../../../feathers';
 
 const App = (props: any) => {
-  console.log(process.env);
-
   const dispatch = useDispatch();
   const app_id = props.match.params.id;
   const user = useSelector((state: StoreState) => state.user);
@@ -88,15 +86,17 @@ const App = (props: any) => {
     let providerEnvironment: string;
 
     if (env) {
-      providerEnvironment = env?.hosting?.provider_environment;
+      providerEnvironment = env?.resources?.hosting?.provider_environment;
     } else {
-      providerEnvironment = environment?.hosting?.provider_environment;
+      providerEnvironment = environment?.resources?.hosting?.provider_environment;
     }
 
     if (!providerEnvironment) {
       setProviderStatus(defaultProviderStatus);
       return;
     };
+
+    console.log(providerEnvironment)
 
     try {
       const status = await api
@@ -153,8 +153,8 @@ const App = (props: any) => {
   const executePipeline = () => {
     api
       .service('aws/hosting')
-      .patch(environment.hosting._id, {
-        pipeline_name: environment?.hosting?.pipeline_name,
+      .patch(environment?.resources?.hosting?._id, {
+        pipeline_name: environment?.resources?.hosting?.pipeline_name,
       });
   };
 
@@ -176,7 +176,7 @@ const App = (props: any) => {
       payload: {
         app_id: app._id,
         environment_id: environment._id,
-        hosting_id: environment?.hosting?._id,
+        hosting_id: environment?.resources?.hosting?._id,
       },
     });
   };
@@ -207,8 +207,8 @@ const App = (props: any) => {
       payload: {
         app_id: app._id,
         environment_id: environment._id,
-        environment_name: environment.hosting.provider_environment,
-        hosting_id: environment.hosting._id,
+        environment_name: environment?.resources?.hosting?.provider_environment,
+        hosting_id: environment?.resources?.hosting?._id,
         ssl_certificate_arn,
       }
     });
@@ -218,12 +218,12 @@ const App = (props: any) => {
     if (!app) {
       dispatch({ type: ActionTypes.GET_MY_APPS });
     } else if (!environment) {
-      setEnvironment(app?.fetched_environments?.[0]);
-      getEnvironmentDetails(app?.fetched_environments?.[0]);
+      setEnvironment(app?.environments?.[0]);
+      getEnvironmentDetails(app?.environments?.[0]);
       clearInterval(healthInterval);
-      setHealthInterval(setInterval(() => getEnvironmentDetails(app?.fetched_environments?.[0]), 5000));
+      setHealthInterval(setInterval(() => getEnvironmentDetails(app?.environments?.[0]), 5000));
     } else if (environment) {
-      const env = app.fetched_environments.find(e => e._id === environment._id);
+      const env = app.environments.find(e => e._id === environment._id);
       setEnvironment(env);
       getEnvironmentDetails(env);
       clearInterval(healthInterval);
