@@ -46,7 +46,6 @@ const authorization = (ChildComponent: any) => {
           }
         }
         if (!role) {
-          console.log(role);
           props.history.push('/');
         }
 

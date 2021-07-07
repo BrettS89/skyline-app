@@ -89,7 +89,10 @@ interface CreateApp {
 function * createAppHandler({ payload }: CreateApp) {
   try {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
-    
+
+    if (!payload.name) throw new Error('Your app must have a name.');
+    if (!payload.environments.length) throw new Error('You must have at least one environment for this app.');
+     
     const createS3 = payload.services.includes('S3 file upload (without Cloudfront)')
     const createCloudfront = payload.services.includes('S3 file upload (with Cloudfront)');
 
@@ -147,8 +150,8 @@ function * createAppHandler({ payload }: CreateApp) {
 
     payload.navigate(createdApp._id);
   } catch(e) {
-    console.log(e);
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
 
@@ -166,6 +169,10 @@ function * addEnvVarsHandler ({ payload }: AddEnvVarsProps) {
   try {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
 
+    if (!payload.remove && !payload.env_vars.every(env => env.includes('='))) {
+      throw new Error('Env vars must be formatted, VAR_NAME=varValue and each be separated by a new line');
+    }
+
     const fn = () => api
       .service('aws/environment')
       .patch(payload.environment_id, {
@@ -182,6 +189,7 @@ function * addEnvVarsHandler ({ payload }: AddEnvVarsProps) {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
   } catch(e) {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
 
@@ -219,6 +227,11 @@ interface LaunchAppHostingProps {
 
 function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
   try {
+    if (!payload.github_account) throw new Error('You must have a Github connection to launch an AWS environment.');
+    if (!payload.provider_type) throw new Error('You must select a "Deploy to" environment.');
+    if (!payload.app_type) throw new Error('You must select an applicaiton type.');
+    if (!payload.github_repo || !payload.repo_branch) throw new Error('You must select both a Github repo and branch to launch an AWS environment.');
+
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
     const fn = () => api
       .service('aws/hosting')
@@ -245,7 +258,7 @@ function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
   } catch(e) {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
-    console.log(e);
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
 
@@ -282,8 +295,8 @@ function * terminateHostingHandler({ payload }: TerminateHostingProps) {
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
   } catch(e) {
-    console.log(e);
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
 
@@ -315,8 +328,8 @@ function * deleteAppHandler({ payload }: DeleteAppProps) {
 
     yield put({ type: ActionTypes.SET_MY_APPS, payload: updatedApps });
   } catch(e) {
-    console.log(e);
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
 
@@ -350,7 +363,7 @@ function * addHttpsListenerHandler({ payload }: AddHttpsListener) {
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
   } catch(e) {
-    console.log(e);
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }

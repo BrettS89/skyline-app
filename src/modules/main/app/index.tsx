@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import authorization from '../../../components/authorization';
 import { ActionTypes } from '../../../redux/actions';
 import { StoreState } from '../../../redux';
-import { defaultProviderStatus, environmentTypes } from './utilities';
+import { defaultProviderStatus } from './utilities';
 import View from './view';
 import api from '../../../feathers';
 
@@ -16,7 +16,6 @@ const App = (props: any) => {
 
   //@ts-ignore
   const [healthInterval, setHealthInterval] = useState(setInterval(() => [], 5000));
-
   const [environment, setEnvironment] = useState(null);
   const [appType, setAppType] = useState(null);
   const [autoDeploy, setAutoDeploy] = useState(false);
@@ -47,7 +46,7 @@ const App = (props: any) => {
     toUpdate(val);
 
     if (toUpdate === setRepository && (typeof val !== 'string' && typeof val !== 'boolean')) {
-      getBranches(val.branches_url);
+      getBranches(val?.branches_url);
     }
   };
 
@@ -62,6 +61,7 @@ const App = (props: any) => {
     const search = window.location.search;
     const params = new URLSearchParams(search);
     const code = params.get('code');
+    if (user.details.github_access_key) return;
 
     if (code) {
       try {
@@ -77,7 +77,7 @@ const App = (props: any) => {
         });
 
       } catch(e) {
-        console.log(e);
+        dispatch({ type: ActionTypes.SET_APP_ERROR, payload: e.message || 'An unkown error ocurred' });
       }
     }
   };
@@ -95,8 +95,6 @@ const App = (props: any) => {
       setProviderStatus(defaultProviderStatus);
       return;
     };
-
-    console.log(providerEnvironment)
 
     try {
       const status = await api
@@ -120,6 +118,11 @@ const App = (props: any) => {
   };
 
   const getBranches = async (url: string) => {
+    if (!url) {
+      setBranches([]);
+      return;
+    }
+    
     const fetchedBranches = await
       api
         .service('github/branch')
@@ -133,8 +136,8 @@ const App = (props: any) => {
       type: ActionTypes.LAUNCH_APP_HOSTING,
       payload: {
         app_id: app._id,
-        app_type: appType.value,
-        app_type_name: appType.name,
+        app_type: appType?.value || null,
+        app_type_name: appType?.name || null,
         environment_id: environment._id,
         application_name: `${app.name}-${environment.environment}`
           .toLowerCase()
@@ -142,20 +145,25 @@ const App = (props: any) => {
           .join('-'),
         auto_deploy: autoDeploy,
         github_account: user.details.github_username,
-        github_repo: repository.name,
+        github_repo: repository?.name || null,
         repo_branch: branch,
         provider: 'ElasticBeanstalk',
-        provider_type: provider,
+        provider_type: provider || null,
       },
     });
   };
 
-  const executePipeline = () => {
-    api
-      .service('aws/hosting')
-      .patch(environment?.resources?.hosting?._id, {
-        pipeline_name: environment?.resources?.hosting?.pipeline_name,
-      });
+  const executePipeline = async () => {
+    try {
+      await api.service('aws/hosting')
+        .patch(environment?.resources?.hosting?._id, {
+          pipeline_name: environment?.resources?.hosting?.pipeline_name,
+        });
+        
+      dispatch({ type: ActionTypes.SET_APP_INFO, payload: 'Deployment initiated. Your environment will begin updating in moments.' });
+    } catch(e) {
+      dispatch({ type: ActionTypes.SET_APP_ERROR, payload: e.message || 'An unknown error ocurred' });
+    }
   };
 
   const addEnvVar = (envVars: string[], remove=false): void => {
