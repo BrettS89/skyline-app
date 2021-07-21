@@ -1,68 +1,53 @@
 import { useState } from 'react';
-import { Button, TextField, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import GitHubIcon from '@material-ui/icons/GitHub';
-import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import useStyles from './styles';
+import SubNav from './components/sub-nav';
 import Deploy from './components/deploy';
+import EnvVars from './components/env-vars';
 import ProviderStatus from './components/provider-status';
 import Https from './components/https';
+import { render } from '@testing-library/react';
 
 const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, connectGithub, deployFields, deleteApp, environment, executePipeline, githubRepos, launchAppHosting, providerStatus, setEnvironment, terminateHosting, updateState, user }) => {
   const classes = useStyles();
 
-  const [addingEnvVar, setAddingEnvVar] = useState(false);
-  const [envVar, setEnvVar] = useState('');
-
-  const onAddEnvVar = () => {
-    addEnvVar([envVar]);
-    setEnvVar('');
-    setAddingEnvVar(false);
-  }
-
-  const renderAddEnvVar = () => {
-    if (addingEnvVar) {
-      return (
-        <div>
-          <TextField
-            className={classes.envVarInput}
-            variant="outlined"
-            size="small"
-            placeholder="ENV_VAR=value"
-            value={envVar}
-            onChange={e => setEnvVar(e.target.value)}
-          />
-          <div>
-            <Button color="primary" onClick={onAddEnvVar}>Add variable</Button>
-            <Button onClick={() => setAddingEnvVar(false)}>Cancel</Button>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div>
-        <span
-          className="hover link"
-          onClick={() => setAddingEnvVar(true)}
-        >
-          Add env var
-        </span>
-      </div>
-    )
-  }
+  const [component, setComponent] = useState('Deploy');
 
   const renderDeploy = () => {
-    if (environment.hosting) {
+    if (environment.resources?.hosting) {
       return (
-        <ProviderStatus
-          environment={environment}
-          executePipeline={executePipeline}
-          providerStatus={providerStatus}
-          terminateHosting={terminateHosting}
-        />
+        <>
+          <div className={classes.section}>
+            <Typography className={classes.label}>
+              Github connection
+            </Typography>
+            <div className="row-centered">
+              <GitHubIcon style={{ marginRight: 10, fontSize: 30 }} />
+              {renderConnectToGithub()}
+            </div>
+          </div>
+          <ProviderStatus
+            environment={environment.resources}
+            executePipeline={executePipeline}
+            providerStatus={providerStatus}
+            terminateHosting={terminateHosting}
+          />
+        </>
       );
     }
 
     return (
+      <>
+        <div className={classes.section}>
+          <Typography className={classes.label}>
+            Github connection
+          </Typography>
+          <div className="row-centered">
+            <GitHubIcon style={{ marginRight: 10, fontSize: 30 }} />
+            {renderConnectToGithub()}
+          </div>
+        </div>
       <Deploy
         branches={branches}
         githubRepos={githubRepos}
@@ -70,29 +55,14 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
         deployFields={deployFields}
         launchAppHosting={launchAppHosting}
       />
+      </>
     );
   };
 
-  const renderEnvVarsSection = () => {
-    if (environment.hosting) {
-      return (
-        <div className={classes.section}>
-          <Typography className={classes.label}>
-            Environment variables
-          </Typography>
-          <div className={classes.envVars}>
-            {renderEnvVars()}
-          </div>
-          {renderAddEnvVar()}
-        </div>
-      );
-    }
-  }
-
   const renderEnvironments = () => {
-    return app.fetched_environments.map(e => {
+    return app.environments.map(e => {
       const color = e.environment === environment.environment
-        ? '#487FF2'
+        ? '#5367FF'
         : 'gray';
 
       return (
@@ -103,21 +73,6 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
         </div>
       );
     });
-  };
-
-  const renderEnvVars = () => {
-    return (environment.env_vars || [])
-      .map(e => (
-        <div key={e} className={classes.envVarDiv}>
-          <span
-            className={`${classes.envVarDelete} red-hover`}
-            onClick={() => addEnvVar([e], true)}
-          >
-            <ClearRoundedIcon style={{ fontSize: 20 }} />
-          </span>
-          <Typography className={classes.envVarText}>{e}</Typography>
-        </div>
-      ));
   };
 
   const renderConnectToGithub = () => {
@@ -134,6 +89,34 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
       </Typography>
     );
   };
+
+  const renderSection = () => {
+    switch(component) {
+      case 'Deploy':
+
+        return renderDeploy();
+
+      case 'Environment Variables':
+        return (
+          <EnvVars
+            environment={environment}
+            addEnvVar={addEnvVar}
+          />
+        );
+
+      case 'HTTPS':
+        return (
+          <Https
+            addHttpsListener={addHttpsListener}
+            certificates={certificates}
+            hosting={environment.resources?.hosting}
+          />
+        );
+
+      default:
+        return renderDeploy();
+    }
+  }
 
   return (
     <div className="container">
@@ -157,34 +140,27 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
         </div>
       
         <div className={classes.right}>
-          <div className={classes.section}>
-            <Typography className={classes.label}>
-              Github connection
-            </Typography>
-            <div className="row-centered">
-              <GitHubIcon style={{ marginRight: 10, fontSize: 30 }} />
-              {renderConnectToGithub()}
-            </div>
-          </div>
+          <SubNav
+            componentName={component}
+            setComponent={setComponent}
+          />
 
-          <div className={classes.section}>
-            <Typography className={classes.label}>
-              Deploy
-            </Typography>
+          {renderSection()}
 
-            {renderDeploy()}
+          {/* {renderDeploy()}
 
-          </div>
+          <EnvVars
+            environment={environment}
+            addEnvVar={addEnvVar}
+          />
 
-          {renderEnvVarsSection()}
-
-          {environment.hosting && (
+          {environment?.resources?.hosting && (
             <Https
               addHttpsListener={addHttpsListener}
               certificates={certificates}
-              hosting={environment.hosting}
+              hosting={environment.resources?.hosting}
             />
-          )}
+          )} */}
           
         </div>
       </div>

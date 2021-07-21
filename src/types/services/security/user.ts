@@ -11,4 +11,8 @@ export interface User extends Partial<Resource> {
   github_username?: string;
   github_orgs: string[];
   github_access_key?: string;
+  aws_keys?: {
+    access_key_id: string;
+    secret_access_key: string;
+  }
 }

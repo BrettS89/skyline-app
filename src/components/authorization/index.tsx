@@ -17,7 +17,7 @@ const authorization = (ChildComponent: any) => {
       let role = user?.details?.role;
 
       try {
-        dispatch({ type: ActionTypes.SET_APP_LOADING, payload: true });    
+        dispatch({ type: ActionTypes.SET_APP_LOADING, payload: { status: true } });    
         if (localStorage.getItem('token') && !user.details) {
           try {
             const { data } = await app.service('security/session').find();
@@ -31,6 +31,10 @@ const authorization = (ChildComponent: any) => {
               type: ActionTypes.GET_MY_APPS,
             });
 
+            dispatch({
+              type: ActionTypes.GET_CERTIFICATES,
+            });
+
             // GET GITHUB REPOS
             if (userData.github_access_key) {
               dispatch({
@@ -41,20 +45,19 @@ const authorization = (ChildComponent: any) => {
             setFinishedAuth(true)
           } catch(e) {
             console.log('error', e);
-            dispatch({ type: ActionTypes.SET_APP_LOADING, payload: false });  
+            dispatch({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });  
             props.history.push('/');
           }
         }
         if (!role) {
-          console.log(role);
           props.history.push('/');
         }
 
         setFinishedAuth(true);
-        dispatch({ type: ActionTypes.SET_APP_LOADING, payload: false });  
+        dispatch({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });  
       } catch(e) {
         console.log(e)
-        dispatch({ type: ActionTypes.SET_APP_LOADING, payload: false });  
+        dispatch({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });  
         dispatch({ type: ActionTypes.SET_APP_ERROR });
       }
     }

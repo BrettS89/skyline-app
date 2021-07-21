@@ -10,33 +10,51 @@ const useStyles = makeStyles({
   },
 });
 
-const ErrorMessage = () => {
+const Message = () => {
   const dispatch = useDispatch();
-  const app = useSelector((state: StoreState) => state.general);
+  const general = useSelector((state: StoreState) => state.general);
   const classes = useStyles();
 
   const handleClose = () => {
     dispatch({ type: ActionTypes.CLOSE_SNACKBAR });
   };
 
+  const renderMessage = () => {
+    if (general.info.message.length) {
+      return (
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          severity="success"
+        >
+        {general.info.message}
+        </MuiAlert>
+      );
+    } else if (general.error.message.length) {
+      return (
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          severity="error"
+        >
+          {general.error.message}
+        </MuiAlert>
+      );
+    } 
+  };
+
   return (
     <Snackbar
       className={classes.snackysnack}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      open={app.snackbarOpen}
+      open={general.snackbarOpen}
       onClose={handleClose}
-      autoHideDuration={2500}
+      autoHideDuration={5000}
       key={'top' + 'center'}
     >
-       <MuiAlert
-        elevation={6}
-        variant="filled"
-        severity="error"
-      >
-        {app.error.message}
-      </MuiAlert>
+      {renderMessage()}
     </Snackbar>
   )
 };
 
-export default ErrorMessage;
+export default Message;
