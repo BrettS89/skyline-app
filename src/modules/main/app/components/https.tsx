@@ -60,7 +60,7 @@ const Https = ({ addHttpsListener, certificates, hosting }) => {
   const renderSingleInstance = () => (
     <>
       <Typography>
-        SSL certificates not avaiable to configure with single instance deployments.
+        SSL certificates are not avaiable to configure with single instance deployments.
       </Typography>
     </>
   );

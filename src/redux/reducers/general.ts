@@ -5,6 +5,9 @@ export interface GeneralState {
   error: {
     message: string;
   };
+  info: {
+    message: string;
+  }
   snackbarOpen: boolean;
   dealModalOpen: boolean;
 }
@@ -13,6 +16,9 @@ const INITIAL_STATE: GeneralState = {
   isLoading: false,
   error: {
     message: '',
+  },
+  info: {
+    message: ''
   },
   snackbarOpen: false,
   dealModalOpen: false,
@@ -35,11 +41,23 @@ const reducer = (state: GeneralState = INITIAL_STATE, { type, payload }: any) =>
         },
       };
 
+    case ActionTypes.SET_APP_INFO:
+      return {
+        ...state,
+        snackbarOpen: true,
+        info: {
+          message: payload,
+        },
+      };
+
     case ActionTypes.CLOSE_SNACKBAR:
       return {
         ...state,
         snackbarOpen: false,
         error: {
+          message: '',
+        },
+        info: {
           message: '',
         },
       };

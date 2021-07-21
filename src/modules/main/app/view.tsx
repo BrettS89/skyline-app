@@ -51,10 +51,10 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
   }
 
   const renderDeploy = () => {
-    if (environment.hosting) {
+    if (environment.resources?.hosting) {
       return (
         <ProviderStatus
-          environment={environment}
+          environment={environment.resources}
           executePipeline={executePipeline}
           providerStatus={providerStatus}
           terminateHosting={terminateHosting}
@@ -74,7 +74,7 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
   };
 
   const renderEnvVarsSection = () => {
-    if (environment.hosting) {
+    if (environment.resources?.hosting) {
       return (
         <div className={classes.section}>
           <Typography className={classes.label}>
@@ -90,7 +90,7 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
   }
 
   const renderEnvironments = () => {
-    return app.fetched_environments.map(e => {
+    return app.environments.map(e => {
       const color = e.environment === environment.environment
         ? '#487FF2'
         : 'gray';
@@ -178,11 +178,11 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
 
           {renderEnvVarsSection()}
 
-          {environment.hosting && (
+          {environment?.resources?.hosting && (
             <Https
               addHttpsListener={addHttpsListener}
               certificates={certificates}
-              hosting={environment.hosting}
+              hosting={environment.resources?.hosting}
             />
           )}
           

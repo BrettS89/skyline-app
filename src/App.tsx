@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import Loading from './components/loading';
 import Router from './routing';
 import Header from './components/header';
+import Message from './components/message';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           </div>
         </div>
         <Loading />
+        <Message />
       </div>
     </BrowserRouter>
   );

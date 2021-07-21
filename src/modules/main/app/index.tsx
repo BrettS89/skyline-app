@@ -3,13 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import authorization from '../../../components/authorization';
 import { ActionTypes } from '../../../redux/actions';
 import { StoreState } from '../../../redux';
-import { defaultProviderStatus, environmentTypes } from './utilities';
+import { defaultProviderStatus } from './utilities';
 import View from './view';
 import api from '../../../feathers';
 
 const App = (props: any) => {
-  console.log(process.env);
-
   const dispatch = useDispatch();
   const app_id = props.match.params.id;
   const user = useSelector((state: StoreState) => state.user);
@@ -18,7 +16,6 @@ const App = (props: any) => {
 
   //@ts-ignore
   const [healthInterval, setHealthInterval] = useState(setInterval(() => [], 5000));
-
   const [environment, setEnvironment] = useState(null);
   const [appType, setAppType] = useState(null);
   const [autoDeploy, setAutoDeploy] = useState(false);
@@ -49,7 +46,7 @@ const App = (props: any) => {
     toUpdate(val);
 
     if (toUpdate === setRepository && (typeof val !== 'string' && typeof val !== 'boolean')) {
-      getBranches(val.branches_url);
+      getBranches(val?.branches_url);
     }
   };
 
@@ -64,6 +61,7 @@ const App = (props: any) => {
     const search = window.location.search;
     const params = new URLSearchParams(search);
     const code = params.get('code');
+    if (user.details.github_access_key) return;
 
     if (code) {
       try {
@@ -79,7 +77,7 @@ const App = (props: any) => {
         });
 
       } catch(e) {
-        console.log(e);
+        dispatch({ type: ActionTypes.SET_APP_ERROR, payload: e.message || 'An unkown error ocurred' });
       }
     }
   };
@@ -88,9 +86,9 @@ const App = (props: any) => {
     let providerEnvironment: string;
 
     if (env) {
-      providerEnvironment = env?.hosting?.provider_environment;
+      providerEnvironment = env?.resources?.hosting?.provider_environment;
     } else {
-      providerEnvironment = environment?.hosting?.provider_environment;
+      providerEnvironment = environment?.resources?.hosting?.provider_environment;
     }
 
     if (!providerEnvironment) {
@@ -120,6 +118,11 @@ const App = (props: any) => {
   };
 
   const getBranches = async (url: string) => {
+    if (!url) {
+      setBranches([]);
+      return;
+    }
+    
     const fetchedBranches = await
       api
         .service('github/branch')
@@ -133,8 +136,8 @@ const App = (props: any) => {
       type: ActionTypes.LAUNCH_APP_HOSTING,
       payload: {
         app_id: app._id,
-        app_type: appType.value,
-        app_type_name: appType.name,
+        app_type: appType?.value || null,
+        app_type_name: appType?.name || null,
         environment_id: environment._id,
         application_name: `${app.name}-${environment.environment}`
           .toLowerCase()
@@ -142,20 +145,25 @@ const App = (props: any) => {
           .join('-'),
         auto_deploy: autoDeploy,
         github_account: user.details.github_username,
-        github_repo: repository.name,
+        github_repo: repository?.name || null,
         repo_branch: branch,
         provider: 'ElasticBeanstalk',
-        provider_type: provider,
+        provider_type: provider || null,
       },
     });
   };
 
-  const executePipeline = () => {
-    api
-      .service('aws/hosting')
-      .patch(environment.hosting._id, {
-        pipeline_name: environment?.hosting?.pipeline_name,
-      });
+  const executePipeline = async () => {
+    try {
+      await api.service('aws/hosting')
+        .patch(environment?.resources?.hosting?._id, {
+          pipeline_name: environment?.resources?.hosting?.pipeline_name,
+        });
+        
+      dispatch({ type: ActionTypes.SET_APP_INFO, payload: 'Deployment initiated. Your environment will begin updating in moments.' });
+    } catch(e) {
+      dispatch({ type: ActionTypes.SET_APP_ERROR, payload: e.message || 'An unknown error ocurred' });
+    }
   };
 
   const addEnvVar = (envVars: string[], remove=false): void => {
@@ -176,7 +184,7 @@ const App = (props: any) => {
       payload: {
         app_id: app._id,
         environment_id: environment._id,
-        hosting_id: environment?.hosting?._id,
+        hosting_id: environment?.resources?.hosting?._id,
       },
     });
   };
@@ -207,8 +215,8 @@ const App = (props: any) => {
       payload: {
         app_id: app._id,
         environment_id: environment._id,
-        environment_name: environment.hosting.provider_environment,
-        hosting_id: environment.hosting._id,
+        environment_name: environment?.resources?.hosting?.provider_environment,
+        hosting_id: environment?.resources?.hosting?._id,
         ssl_certificate_arn,
       }
     });
@@ -218,12 +226,12 @@ const App = (props: any) => {
     if (!app) {
       dispatch({ type: ActionTypes.GET_MY_APPS });
     } else if (!environment) {
-      setEnvironment(app?.fetched_environments?.[0]);
-      getEnvironmentDetails(app?.fetched_environments?.[0]);
+      setEnvironment(app?.environments?.[0]);
+      getEnvironmentDetails(app?.environments?.[0]);
       clearInterval(healthInterval);
-      setHealthInterval(setInterval(() => getEnvironmentDetails(app?.fetched_environments?.[0]), 5000));
+      setHealthInterval(setInterval(() => getEnvironmentDetails(app?.environments?.[0]), 5000));
     } else if (environment) {
-      const env = app.fetched_environments.find(e => e._id === environment._id);
+      const env = app.environments.find(e => e._id === environment._id);
       setEnvironment(env);
       getEnvironmentDetails(env);
       clearInterval(healthInterval);
