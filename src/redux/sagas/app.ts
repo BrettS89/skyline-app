@@ -18,6 +18,8 @@ export default [
   terminateHostingWatcher,
   deleteAppWatcher,
   addHttpsListenerWatcher,
+  getCertificatesWatcher,
+  createCertificateWatcher,
 ];
 
 function * getMyAppsWatcher() {
@@ -50,6 +52,14 @@ function * deleteAppWatcher() {
 
 function * addHttpsListenerWatcher() {
   yield takeLatest(ActionTypes.ADD_HTTPS_LISTENER, addHttpsListenerHandler);
+}
+
+function * getCertificatesWatcher() {
+  yield takeLatest(ActionTypes.GET_CERTIFICATES, getCertificatesHandler);
+}
+
+function * createCertificateWatcher() {
+  yield takeLatest(ActionTypes.CREATE_CERTIFICATE, createCertificateHandler);
 }
 
 function * getMyAppsHandler() {
@@ -88,7 +98,7 @@ interface CreateApp {
 
 function * createAppHandler({ payload }: CreateApp) {
   try {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true } });
 
     if (!payload.name) throw new Error('Your app must have a name.');
     if (!payload.environments.length) throw new Error('You must have at least one environment for this app.');
@@ -146,11 +156,11 @@ function * createAppHandler({ payload }: CreateApp) {
       payload: updatedApps,
     });
 
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
 
     payload.navigate(createdApp._id);
   } catch(e) {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
@@ -167,7 +177,11 @@ interface AddEnvVarsProps {
 
 function * addEnvVarsHandler ({ payload }: AddEnvVarsProps) {
   try {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
+    const message = payload.remove
+      ? 'Removing environment variable'
+      : 'Adding environment variables'
+
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message } });
 
     if (!payload.remove && !payload.env_vars.every(env => env.includes('='))) {
       throw new Error('Env vars must be formatted, VAR_NAME=varValue and each be separated by a new line');
@@ -186,9 +200,9 @@ function * addEnvVarsHandler ({ payload }: AddEnvVarsProps) {
       type: ActionTypes.GET_MY_APPS,
     });
 
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
   } catch(e) {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
@@ -232,7 +246,7 @@ function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
     if (!payload.app_type) throw new Error('You must select an applicaiton type.');
     if (!payload.github_repo || !payload.repo_branch) throw new Error('You must select both a Github repo and branch to launch an AWS environment.');
 
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message: 'Launching your AWS environment' } });
     const fn = () => api
       .service('aws/hosting')
       .create({
@@ -255,9 +269,9 @@ function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
       type: ActionTypes.GET_MY_APPS,
     });
 
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false, } });
   } catch(e) {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
@@ -273,7 +287,7 @@ interface TerminateHostingProps {
 
 function * terminateHostingHandler({ payload }: TerminateHostingProps) {
   try {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message: 'Terminating your AWS environment' } });
 
     const removeHosting = () => api
       .service('aws/hosting')
@@ -293,9 +307,9 @@ function * terminateHostingHandler({ payload }: TerminateHostingProps) {
       type: ActionTypes.GET_MY_APPS,
     });
 
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
   } catch(e) {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
@@ -310,7 +324,7 @@ interface DeleteAppProps {
 
 function * deleteAppHandler({ payload }: DeleteAppProps) {
   try {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message: 'Deleting app and any associated AWS environments' } });
 
     const app: AppState = yield select(appSelector);
 
@@ -320,7 +334,7 @@ function * deleteAppHandler({ payload }: DeleteAppProps) {
 
     yield call(deleteApp);
 
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
 
     payload.navigate('/apps');
 
@@ -328,7 +342,7 @@ function * deleteAppHandler({ payload }: DeleteAppProps) {
 
     yield put({ type: ActionTypes.SET_MY_APPS, payload: updatedApps });
   } catch(e) {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
@@ -337,6 +351,7 @@ interface AddHttpsListener {
   type: string;
   payload: {
     app_id: string;
+    aws_region: string;
     hosting_id: string;
     environment_id: string;
     environment_name: string;
@@ -346,11 +361,12 @@ interface AddHttpsListener {
 
 function * addHttpsListenerHandler({ payload }: AddHttpsListener) {
   try {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message: 'Adding SSL certificate to your environment' } });
 
     const fn = () => api
       .service('aws/hosting')
       .patch(payload.hosting_id, {
+        aws_region: payload.aws_region,
         environment_name: payload.environment_name,
         ssl_certificate_arn: payload.ssl_certificate_arn,
       });
@@ -361,9 +377,58 @@ function * addHttpsListenerHandler({ payload }: AddHttpsListener) {
       type: ActionTypes.GET_MY_APPS,
     });
 
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
   } catch(e) {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
+  }
+}
+
+function * getCertificatesHandler() {
+  try {
+    const user: UserState = yield select(userSelector);
+    const fn = () => api
+      .service('aws/certificate')
+      .find({ query: { user_id: user.details._id } });
+
+    const certs = yield call(fn);
+
+    yield put({ type: ActionTypes.SET_CERTIFICATES, payload: certs.data });
+  } catch(e) {}
+}
+
+interface CreateCertificate {
+  type: string;
+  payload: {
+    aws_region: string;
+    domain: string;
+  }
+}
+
+function * createCertificateHandler({ payload }: CreateCertificate) {
+  try {
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message: 'Creating SSL certificate' } });
+
+    const app: AppState = yield select(appSelector);
+    const user: UserState = yield select(userSelector);
+    console.log(user);
+
+    const fn = () => api
+      .service('aws/certificate')
+      .create({
+        aws_region: payload.aws_region,
+        domain: payload.domain,
+      });
+
+    const certificate = yield call(fn);
+
+    const updatedCertificatesState = [certificate, ...app.certificates];
+
+    yield put({ type: ActionTypes.SET_CERTIFICATES, payload: updatedCertificatesState });
+
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
+  } catch(e) {
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }

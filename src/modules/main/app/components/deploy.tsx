@@ -7,7 +7,10 @@ const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHos
   const classes = useStyles();
 
   return (
-    <>
+    <div className={classes.section}>
+      <Typography className={classes.label}>
+        Deploy
+      </Typography>
       <div className={classes.deployDropdownDiv}>
         <Autocomplete
           size="small"
@@ -89,9 +92,9 @@ const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHos
         disableElevation
         onClick={launchAppHosting}
       >
-        Launch
+        Launch Environment
       </Button>
-    </>
+    </div>
   );
 };
 

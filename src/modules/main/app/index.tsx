@@ -24,7 +24,6 @@ const App = (props: any) => {
   const [provider, setProvider] = useState(null);
   const [providerStatus, setProviderStatus] = useState({});
   const [repository, setRepository] = useState(null);
-  const [certificates, setCertificates] = useState([]);
 
   const fnMap = {
     appType: setAppType,
@@ -99,7 +98,7 @@ const App = (props: any) => {
     try {
       const status = await api
         .service('aws/status')
-        .find({ query: { environment: providerEnvironment } });
+        .find({ query: { environment: providerEnvironment, aws_region: environment?.aws_region || env?.aws_region} });
 
         setProviderStatus({
         ...defaultProviderStatus,
@@ -158,6 +157,7 @@ const App = (props: any) => {
       await api.service('aws/hosting')
         .patch(environment?.resources?.hosting?._id, {
           pipeline_name: environment?.resources?.hosting?.pipeline_name,
+          aws_region: environment.aws_region,
         });
         
       dispatch({ type: ActionTypes.SET_APP_INFO, payload: 'Deployment initiated. Your environment will begin updating in moments.' });
@@ -166,12 +166,14 @@ const App = (props: any) => {
     }
   };
 
-  const addEnvVar = (envVars: string[], remove=false): void => {
+  const addEnvVar = (envVars: string, remove=false): void => {
+    const envVarData = remove ? [envVars] : envVars.split('\n')
+
     dispatch({
       type: ActionTypes.ADD_ENV_VARS,
       payload: {
         app_id: app._id,
-        env_vars: envVars,
+        env_vars: envVarData,
         environment_id: environment._id,
         remove,
       },
@@ -201,19 +203,12 @@ const App = (props: any) => {
     })
   };
 
-  const getCertificates = async (): Promise<void> => {
-    const { certificates } = await api
-      .service('aws/certificate')
-      .find();
-
-    setCertificates(certificates);
-  };
-
   const addHttpsListener = (ssl_certificate_arn: string): void => {
     dispatch({
       type: ActionTypes.ADD_HTTPS_LISTENER,
       payload: {
         app_id: app._id,
+        aws_region: environment.aws_region,
         environment_id: environment._id,
         environment_name: environment?.resources?.hosting?.provider_environment,
         hosting_id: environment?.resources?.hosting?._id,
@@ -241,7 +236,6 @@ const App = (props: any) => {
 
   useEffect(() => {
     setGithubToken();
-    getCertificates();
 
     return () => {
       clearInterval(healthInterval);
@@ -252,7 +246,7 @@ const App = (props: any) => {
     <View
       addEnvVar={addEnvVar}
       addHttpsListener={addHttpsListener}
-      certificates={certificates}
+      certificates={apps.certificates}
       deployFields={{
         autoDeploy,
       }}

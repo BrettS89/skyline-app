@@ -20,12 +20,12 @@ const Https = ({ addHttpsListener, certificates, hosting }) => {
         <Autocomplete
           size="small"
           options={certificates}
-          getOptionLabel={(option: any) => option.name}
-          getOptionDisabled={(option: any) => option.name.includes('PENDING')}
-          onChange={(event, newValue) => setSelectedCertificate(newValue?.CertificateArn || null)}
+          getOptionLabel={(option: any) => `${option.domain} - ${option.status}`}
+          getOptionDisabled={(option: any) => option.status.includes('PENDING')}
+          onChange={(event, newValue) => setSelectedCertificate(newValue?.arn || null)}
           renderInput={(params) => (
             <TextField
-              className={classes.longDropdown}
+              className={classes.longerDropdown}
               size="small" {...params}
               placeholder="Select an ssl certificate"
               variant="outlined"
@@ -65,10 +65,20 @@ const Https = ({ addHttpsListener, certificates, hosting }) => {
     </>
   );
 
+  const renderNoHosting = () => (
+    <>
+      <Typography>
+        You must launch an autoscale environment to configure HTTPS forwarding.
+      </Typography>
+    </>
+  );
+
   const renderHttps = () => {
-    if (hosting.ssl_certificate_arn) {
+    if (!hosting) return renderNoHosting();
+
+    if (hosting?.ssl_certificate_arn) {
       return renderView();
-    } else if (!hosting.autoscale) {
+    } else if (!hosting?.autoscale) {
       return renderSingleInstance();
     }
 
@@ -77,9 +87,9 @@ const Https = ({ addHttpsListener, certificates, hosting }) => {
 
   return (
     <div className={classes.section}>
-      <Typography className={classes.label}>
+      {/* <Typography className={classes.label}>
         Https
-      </Typography>
+      </Typography> */}
       {renderHttps()}
     </div>
   );

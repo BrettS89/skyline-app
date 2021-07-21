@@ -17,7 +17,17 @@ const MyAppsView: FC<Props> = ({ myApps, navigateTo }) => {
       app={a}
       navigateTo={navigateTo}
     />
-  ))
+  ));
+
+  const renderNoAppsMessage = () => {
+    if (myApps.length) return;
+
+    return (
+      <Typography className={classes.noApps}>
+        You currently have no apps in Skyline. Click 'Create new app' to get started.
+      </Typography>
+    )
+  };
 
   return (
     <div className="container">
@@ -32,6 +42,8 @@ const MyAppsView: FC<Props> = ({ myApps, navigateTo }) => {
           Create new app
         </Button>
       </div>
+
+      {renderNoAppsMessage()}
 
       <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
         {renderApps()}
