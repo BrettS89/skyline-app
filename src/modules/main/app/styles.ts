@@ -21,6 +21,17 @@ const useStyles = makeStyles({
     flexGrow: 1,
     overflowY: 'auto',
   },
+  subNav: {
+    display: 'flex',
+    marginBottom: 30,
+  },
+  subNavLink: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: 30,
+  },
+  subNavText: {
+  },
   label: {
     fontWeight: 600,
     marginBottom: 15,
@@ -33,7 +44,7 @@ const useStyles = makeStyles({
   envVars: {
     display: 'flex',
     flexDirection: 'column',
-    marginBottom: 15,
+    marginBottom: 10,
   },
   envVarDiv: {
     display: 'flex',
@@ -58,6 +69,10 @@ const useStyles = makeStyles({
   },
   longDropdown: {
     width: 300,
+    marginBottom: 10,
+  },
+  longerDropdown: {
+    width: 375,
     marginBottom: 10,
   },
   shortDropdown: {

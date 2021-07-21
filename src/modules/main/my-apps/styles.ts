@@ -1,6 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
+  noApps: {
+    color: 'grey',
+    fontStyle: 'italic',
+  },
   appCard: {
     display: 'flex',
     borderBottom: '1px solid lightgray',
@@ -24,7 +28,7 @@ const useStyles = makeStyles({
   appCardEnvs: {
     fontSize: 13,
     marginLeft: 30,
-    color: '#487FF2'
+    color: '#5367FF'
   }
 });
 

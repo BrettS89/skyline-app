@@ -2,17 +2,19 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles({
   appBar: {
-    // height: 0
+    height: 60
   },
   logo: {
     paddingTop: 2,
-    marginLeft: 3,
+    marginLeft: 2,
     letterSpacing: 2,
     fontWeight: 600,
+    fontSize: 20,
   },
   toolbar: {
     display: 'flex',
     justifyContent: 'space-between',
+    minHeight: 60
   },
   leftItems: {
     display: 'flex',
@@ -30,6 +32,9 @@ const useStyles = makeStyles({
   link: {
     color: '#fff',
     marginLeft: 10
+  },
+  userIcon: {
+    marginLeft: 25,
   }
 });
 

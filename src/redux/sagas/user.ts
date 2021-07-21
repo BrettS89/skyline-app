@@ -1,4 +1,3 @@
-
 import {
   call, put, takeLatest, select, fork,
 } from 'redux-saga/effects';
@@ -27,7 +26,7 @@ interface PatchUserProps {
 
 function * patchUserHandler({ payload }: PatchUserProps) {
   try {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: true });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true } });
     const user = yield select(userSelector);
 
     const fn = () => api.service('security/user').patch(user.details._id, payload);
@@ -38,9 +37,14 @@ function * patchUserHandler({ payload }: PatchUserProps) {
       payload: { ...user.details, ...patchedUser },
     });
 
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
+
+    if (Object.keys(payload).includes('aws_keys') && payload.aws_keys === null) {
+      yield put({ type: ActionTypes.SET_APP_INFO, payload: 'AWS credentials successfully removed from Skyline' });
+    }
   } catch(e) {
-    yield put({ type: ActionTypes.SET_APP_LOADING, payload: false });
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
 }
 
