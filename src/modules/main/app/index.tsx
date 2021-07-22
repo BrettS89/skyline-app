@@ -147,7 +147,8 @@ const App = (props: any) => {
         github_repo: repository?.name || null,
         repo_branch: branch,
         provider: 'ElasticBeanstalk',
-        provider_type: provider || null,
+        provider_type: provider.name || null,
+        provider_value: provider.value || null,
       },
     });
   };
@@ -160,7 +161,7 @@ const App = (props: any) => {
           aws_region: environment.aws_region,
         });
         
-      dispatch({ type: ActionTypes.SET_APP_INFO, payload: 'Deployment initiated. Your environment will begin updating in moments.' });
+      dispatch({ type: ActionTypes.SET_APP_INFO, payload: 'Deployment initiated. Your environment will begin updating momentarily.' });
     } catch(e) {
       dispatch({ type: ActionTypes.SET_APP_ERROR, payload: e.message || 'An unknown error ocurred' });
     }

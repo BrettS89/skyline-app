@@ -236,6 +236,7 @@ interface LaunchAppHostingProps {
     environment_id: string;
     provider: string;
     provider_type: string;
+    provider_value: string;
   }
 }
 
@@ -245,7 +246,7 @@ function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
     if (!payload.provider_type) throw new Error('You must select a "Deploy to" environment.');
     if (!payload.app_type) throw new Error('You must select an applicaiton type.');
     if (!payload.github_repo || !payload.repo_branch) throw new Error('You must select both a Github repo and branch to launch an AWS environment.');
-
+    
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message: 'Launching your AWS environment' } });
     const fn = () => api
       .service('aws/hosting')
@@ -261,6 +262,7 @@ function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
         environment_id: payload.environment_id,
         provider: payload.provider,
         provider_type: payload.provider_type,
+        provider_value: payload.provider_value,
       });
 
     yield call(fn);
