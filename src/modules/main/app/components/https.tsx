@@ -8,14 +8,33 @@ const Https = ({ addEc2HttpsListener, addHttpsListener, certificates, hosting })
   const classes = useStyles();
 
   const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const [domainName, setDomainName] = useState('');
 
   const onAddCertificate = () => {
     if (hosting.autoscale) {
       addHttpsListener(selectedCertificate);
     } else {
-      addEc2HttpsListener(selectedCertificate);
+      if (!domainName) {
+        alert('Please include a domain name');
+        return;
+      }
+
+      addEc2HttpsListener(selectedCertificate, domainName);
     }
   };
+
+  const renderDomainInput = () => (
+    <div>
+      <TextField
+        placeholder='Domain e.g. example.com or sub.example.com'
+        onChange={e => setDomainName(e.target.value)}
+        value={domainName}
+        variant='outlined'
+        className={classes.longerDropdown}
+        size='small'
+      />
+    </div>
+  );
 
   const renderSelect = () => (
     <>
@@ -35,6 +54,7 @@ const Https = ({ addEc2HttpsListener, addHttpsListener, certificates, hosting })
             />
           )}
         />
+        {!hosting.autoscale && renderDomainInput()}
       </div>
 
       <Button

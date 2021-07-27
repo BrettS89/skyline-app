@@ -218,14 +218,14 @@ const App = (props: any) => {
     });
   };
 
-  const addEc2HttpsListener = (certificate): void => {
+  const addEc2HttpsListener = (certificate, domainName: string): void => {
     dispatch({
       type: ActionTypes.ADD_EC2_HTTPS_LISTENER,
       payload: {
         hosting_id: environment?.resources?.hosting?._id,
         aws_region: environment.aws_region,
         ssl_certificate_arn: certificate.arn,
-        domain_name: certificate.domain,
+        domain_name: domainName,
         //@ts-ignore
         url: providerStatus.CNAME,
       },
