@@ -109,6 +109,12 @@ const useStyles = makeStyles({
   sslSelect: {
     marginBottom: 15,
   },
+  httpsDeployedText: {
+    color: 'grey',
+    fontStyle: 'italic',
+    marginTop: 15,
+    fontSize: 14,
+  }
 });
 
 export default useStyles;

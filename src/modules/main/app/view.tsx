@@ -7,9 +7,8 @@ import Deploy from './components/deploy';
 import EnvVars from './components/env-vars';
 import ProviderStatus from './components/provider-status';
 import Https from './components/https';
-import { render } from '@testing-library/react';
 
-const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, connectGithub, deployFields, deleteApp, environment, executePipeline, githubRepos, launchAppHosting, providerStatus, setEnvironment, terminateHosting, updateState, user }) => {
+const AppView = ({ addEc2HttpsListener, addEnvVar, addHttpsListener, app, branches, certificates, connectGithub, deployFields, deleteApp, environment, executePipeline, githubRepos, launchAppHosting, providerStatus, setEnvironment, terminateHosting, updateState, user }) => {
   const classes = useStyles();
 
   const [component, setComponent] = useState('Deploy');
@@ -107,6 +106,7 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
       case 'HTTPS':
         return (
           <Https
+            addEc2HttpsListener={addEc2HttpsListener}
             addHttpsListener={addHttpsListener}
             certificates={certificates}
             hosting={environment.resources?.hosting}
@@ -146,21 +146,6 @@ const AppView = ({ addEnvVar, addHttpsListener, app, branches, certificates, con
           />
 
           {renderSection()}
-
-          {/* {renderDeploy()}
-
-          <EnvVars
-            environment={environment}
-            addEnvVar={addEnvVar}
-          />
-
-          {environment?.resources?.hosting && (
-            <Https
-              addHttpsListener={addHttpsListener}
-              certificates={certificates}
-              hosting={environment.resources?.hosting}
-            />
-          )} */}
           
         </div>
       </div>

@@ -204,7 +204,7 @@ const App = (props: any) => {
     })
   };
 
-  const addHttpsListener = (ssl_certificate_arn: string): void => {
+  const addHttpsListener = (ssl_certificate): void => {
     dispatch({
       type: ActionTypes.ADD_HTTPS_LISTENER,
       payload: {
@@ -213,8 +213,22 @@ const App = (props: any) => {
         environment_id: environment._id,
         environment_name: environment?.resources?.hosting?.provider_environment,
         hosting_id: environment?.resources?.hosting?._id,
-        ssl_certificate_arn,
+        ssl_certificate,
       }
+    });
+  };
+
+  const addEc2HttpsListener = (certificate): void => {
+    dispatch({
+      type: ActionTypes.ADD_EC2_HTTPS_LISTENER,
+      payload: {
+        hosting_id: environment?.resources?.hosting?._id,
+        aws_region: environment.aws_region,
+        ssl_certificate_arn: certificate.arn,
+        domain_name: certificate.domain,
+        //@ts-ignore
+        url: providerStatus.CNAME,
+      },
     });
   };
 
@@ -245,6 +259,7 @@ const App = (props: any) => {
 
   return app && environment ? (
     <View
+      addEc2HttpsListener={addEc2HttpsListener}
       addEnvVar={addEnvVar}
       addHttpsListener={addHttpsListener}
       certificates={apps.certificates}

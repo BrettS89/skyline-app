@@ -1,11 +1,11 @@
 export const appTypes = [
   {
     name: 'Docker',
-    value:'64bit Amazon Linux 2 v3.4.2 running Docker',
+    value:'64bit Amazon Linux 2 v3.4.3 running Docker',
   },
   {
     name: 'Node.js',
-    value: '64bit Amazon Linux 2 v5.4.1 running Node.js 14',
+    value: '64bit Amazon Linux 2 v5.4.3 running Node.js 14',
   },
 ];
 

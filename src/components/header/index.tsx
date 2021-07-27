@@ -18,6 +18,10 @@ const Header = (props: any) => {
       return;
     }
 
+    if (!window.location.pathname.includes('apps')) {
+      return;
+    }
+
     return (
       <Button
         className={classes.link}
