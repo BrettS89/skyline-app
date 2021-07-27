@@ -109,6 +109,14 @@ const Https = ({ addEc2HttpsListener, addHttpsListener, certificates, hosting })
     </>
   );
 
+  const renderNoHosting = () => (
+    <>
+      <Typography>
+        You must launch an autoscale environment to configure HTTPS forwarding.
+      </Typography>
+    </>
+  );
+
   const renderHttps = () => {
     if (!hosting) return renderNoHosting();
 
