@@ -18,6 +18,7 @@ export default [
   terminateHostingWatcher,
   deleteAppWatcher,
   addHttpsListenerWatcher,
+  addEc2HttpsListenerWatcher,
   getCertificatesWatcher,
   createCertificateWatcher,
 ];
@@ -52,6 +53,10 @@ function * deleteAppWatcher() {
 
 function * addHttpsListenerWatcher() {
   yield takeLatest(ActionTypes.ADD_HTTPS_LISTENER, addHttpsListenerHandler);
+}
+
+function * addEc2HttpsListenerWatcher() {
+  yield takeLatest(ActionTypes.ADD_EC2_HTTPS_LISTENER, addEc2HttpsListenerHandler);
 }
 
 function * getCertificatesWatcher() {
@@ -236,6 +241,7 @@ interface LaunchAppHostingProps {
     environment_id: string;
     provider: string;
     provider_type: string;
+    provider_value: string;
   }
 }
 
@@ -261,6 +267,7 @@ function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
         environment_id: payload.environment_id,
         provider: payload.provider,
         provider_type: payload.provider_type,
+        provider_value: payload.provider_value,
       });
 
     yield call(fn);
@@ -355,7 +362,7 @@ interface AddHttpsListener {
     hosting_id: string;
     environment_id: string;
     environment_name: string;
-    ssl_certificate_arn: string;
+    ssl_certificate: any;
   };
 }
 
@@ -368,7 +375,45 @@ function * addHttpsListenerHandler({ payload }: AddHttpsListener) {
       .patch(payload.hosting_id, {
         aws_region: payload.aws_region,
         environment_name: payload.environment_name,
+        ssl_certificate_arn: payload.ssl_certificate.arn,
+        domain_name: payload.ssl_certificate.domain
+      });
+
+    yield call(fn);
+
+    yield put({
+      type: ActionTypes.GET_MY_APPS,
+    });
+
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
+  } catch(e) {
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
+  }
+}
+
+interface AddEc2HttpsListener {
+  type: string;
+  payload: {
+    aws_region: string;
+    hosting_id: string;
+    domain_name: string;
+    ssl_certificate_arn: string;
+    url: string;
+  };
+}
+
+function * addEc2HttpsListenerHandler({ payload }: AddEc2HttpsListener) {
+  try {
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true } });
+
+    const fn = () => api
+      .service('aws/hosting')
+      .patch(payload.hosting_id, {
+        aws_region: payload.aws_region,
+        domain_name: payload.domain_name,
         ssl_certificate_arn: payload.ssl_certificate_arn,
+        url: payload.url,
       });
 
     yield call(fn);
@@ -394,7 +439,8 @@ function * getCertificatesHandler() {
     const certs = yield call(fn);
 
     yield put({ type: ActionTypes.SET_CERTIFICATES, payload: certs.data });
-  } catch(e) {}
+  } catch(e) {
+  }
 }
 
 interface CreateCertificate {

@@ -4,14 +4,17 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import KeyValue from '../../../../components/key-value';
 import useStyles from '../styles';
 
-const Https = ({ addHttpsListener, certificates, hosting }) => {
+const Https = ({ addEc2HttpsListener, addHttpsListener, certificates, hosting }) => {
   const classes = useStyles();
 
   const [selectedCertificate, setSelectedCertificate] = useState(null);
 
   const onAddCertificate = () => {
-    addHttpsListener(selectedCertificate);
-    setSelectedCertificate(null);
+    if (hosting.autoscale) {
+      addHttpsListener(selectedCertificate);
+    } else {
+      addEc2HttpsListener(selectedCertificate);
+    }
   };
 
   const renderSelect = () => (
@@ -22,7 +25,7 @@ const Https = ({ addHttpsListener, certificates, hosting }) => {
           options={certificates}
           getOptionLabel={(option: any) => `${option.domain} - ${option.status}`}
           getOptionDisabled={(option: any) => option.status.includes('PENDING')}
-          onChange={(event, newValue) => setSelectedCertificate(newValue?.arn || null)}
+          onChange={(event, newValue) => setSelectedCertificate(newValue|| null)}
           renderInput={(params) => (
             <TextField
               className={classes.longerDropdown}
@@ -46,21 +49,62 @@ const Https = ({ addHttpsListener, certificates, hosting }) => {
     </>
   );
 
-  const renderView = () => (
-    <>
-      <KeyValue
-        keyText='SSL certificate arn:'
-        value={hosting.ssl_certificate_arn.trim()}
-        width={140}
-        marginRight={5}
-      />
-    </>
-  );
+  const renderView = () => {
+    if (hosting.autoscale) {
+      return (
+        <>
+          <div className={classes.statusKvp}>
+            <KeyValue
+              keyText='Domain:'
+              value={hosting.domain_name.trim()}
+              width={140}
+              marginRight={5}
+            />
+          </div>
+          
+          <div className={classes.statusKvp}>
+            <KeyValue
+              keyText='SSL certificate arn:'
+              value={hosting.ssl_certificate_arn.trim()}
+              width={140}
+              marginRight={5}
+            />
+          </div>
+        </>
+      );
+    }
 
-  const renderSingleInstance = () => (
+    return (
+      <>
+      <div className={classes.statusKvp}>
+        <KeyValue
+          keyText='Domain:'
+          value={hosting.domain_name.trim()}
+          width={140}
+          marginRight={5}
+        />
+      </div>
+
+      <div className={classes.statusKvp}>
+        <KeyValue
+          keyText='HTTPS URL:'
+          value={hosting.cloudfront_url.trim()}
+          width={140}
+          marginRight={5}
+        />
+      </div>
+
+      <Typography className={classes.httpsDeployedText}>
+        Your HTTPS url will take several minutes to deploy after initial setup.
+      </Typography>
+      </>
+    );
+  };
+
+  const renderNoHosting = () => (
     <>
       <Typography>
-        SSL certificates are not avaiable to configure with single instance deployments.
+        You must launch an AWS environment to configure HTTPS forwarding.
       </Typography>
     </>
   );
@@ -78,8 +122,6 @@ const Https = ({ addHttpsListener, certificates, hosting }) => {
 
     if (hosting?.ssl_certificate_arn) {
       return renderView();
-    } else if (!hosting?.autoscale) {
-      return renderSingleInstance();
     }
 
     return renderSelect();

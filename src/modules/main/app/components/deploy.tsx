@@ -16,7 +16,7 @@ const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHos
           size="small"
           options={environmentTypes}
           getOptionLabel={(option: any) => option.name}
-          onChange={(event, newValue) => updateState('provider', newValue?.name ?? null)}
+          onChange={(event, newValue) => updateState('provider', newValue ?? null)}
           renderInput={(params) => (
             <TextField
               className={classes.longDropdown}
@@ -56,7 +56,7 @@ const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHos
         />
         <div className={classes.branchDiv}>
           <Autocomplete
-          size="small"
+            size="small"
             options={branches}
             getOptionLabel={(option: any) => option.name}
             onChange={(event, newValue) => updateState('branch', newValue?.name ?? null)}
@@ -82,8 +82,6 @@ const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHos
             </Typography>
           </div>
         </div>
-
-        
       </div>
 
       <Button

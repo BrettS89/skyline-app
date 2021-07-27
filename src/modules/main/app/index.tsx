@@ -147,7 +147,8 @@ const App = (props: any) => {
         github_repo: repository?.name || null,
         repo_branch: branch,
         provider: 'ElasticBeanstalk',
-        provider_type: provider || null,
+        provider_type: provider.name || null,
+        provider_value: provider.value || null,
       },
     });
   };
@@ -160,7 +161,7 @@ const App = (props: any) => {
           aws_region: environment.aws_region,
         });
         
-      dispatch({ type: ActionTypes.SET_APP_INFO, payload: 'Deployment initiated. Your environment will begin updating in moments.' });
+      dispatch({ type: ActionTypes.SET_APP_INFO, payload: 'Deployment initiated. Your environment will begin updating momentarily.' });
     } catch(e) {
       dispatch({ type: ActionTypes.SET_APP_ERROR, payload: e.message || 'An unknown error ocurred' });
     }
@@ -203,7 +204,7 @@ const App = (props: any) => {
     })
   };
 
-  const addHttpsListener = (ssl_certificate_arn: string): void => {
+  const addHttpsListener = (ssl_certificate): void => {
     dispatch({
       type: ActionTypes.ADD_HTTPS_LISTENER,
       payload: {
@@ -212,8 +213,22 @@ const App = (props: any) => {
         environment_id: environment._id,
         environment_name: environment?.resources?.hosting?.provider_environment,
         hosting_id: environment?.resources?.hosting?._id,
-        ssl_certificate_arn,
+        ssl_certificate,
       }
+    });
+  };
+
+  const addEc2HttpsListener = (certificate): void => {
+    dispatch({
+      type: ActionTypes.ADD_EC2_HTTPS_LISTENER,
+      payload: {
+        hosting_id: environment?.resources?.hosting?._id,
+        aws_region: environment.aws_region,
+        ssl_certificate_arn: certificate.arn,
+        domain_name: certificate.domain,
+        //@ts-ignore
+        url: providerStatus.CNAME,
+      },
     });
   };
 
@@ -244,6 +259,7 @@ const App = (props: any) => {
 
   return app && environment ? (
     <View
+      addEc2HttpsListener={addEc2HttpsListener}
       addEnvVar={addEnvVar}
       addHttpsListener={addHttpsListener}
       certificates={apps.certificates}
