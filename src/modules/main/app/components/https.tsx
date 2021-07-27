@@ -101,7 +101,7 @@ const Https = ({ addEc2HttpsListener, addHttpsListener, certificates, hosting })
     );
   };
 
-  const renderNoHosting = () => (
+  const renderNoHosting2 = () => (
     <>
       <Typography>
         You must launch an AWS environment to configure HTTPS forwarding.
@@ -109,16 +109,8 @@ const Https = ({ addEc2HttpsListener, addHttpsListener, certificates, hosting })
     </>
   );
 
-  const renderNoHosting = () => (
-    <>
-      <Typography>
-        You must launch an autoscale environment to configure HTTPS forwarding.
-      </Typography>
-    </>
-  );
-
   const renderHttps = () => {
-    if (!hosting) return renderNoHosting();
+    if (!hosting) return renderNoHosting2();
 
     if (hosting?.ssl_certificate_arn) {
       return renderView();
@@ -129,9 +121,6 @@ const Https = ({ addEc2HttpsListener, addHttpsListener, certificates, hosting })
 
   return (
     <div className={classes.section}>
-      {/* <Typography className={classes.label}>
-        Https
-      </Typography> */}
       {renderHttps()}
     </div>
   );
