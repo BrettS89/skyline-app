@@ -251,7 +251,7 @@ function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
     if (!payload.provider_type) throw new Error('You must select a "Deploy to" environment.');
     if (!payload.app_type) throw new Error('You must select an applicaiton type.');
     if (!payload.github_repo || !payload.repo_branch) throw new Error('You must select both a Github repo and branch to launch an AWS environment.');
-    
+
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message: 'Launching your AWS environment' } });
     const fn = () => api
       .service('aws/hosting')
@@ -316,7 +316,6 @@ function * terminateHostingHandler({ payload }: TerminateHostingProps) {
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
   } catch(e) {
-    console.log(e);
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
@@ -425,7 +424,6 @@ function * addEc2HttpsListenerHandler({ payload }: AddEc2HttpsListener) {
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
   } catch(e) {
-    console.log(e);
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
@@ -440,11 +438,8 @@ function * getCertificatesHandler() {
 
     const certs = yield call(fn);
 
-    console.log(certs);
-
     yield put({ type: ActionTypes.SET_CERTIFICATES, payload: certs.data });
   } catch(e) {
-    console.log(e);
   }
 }
 
