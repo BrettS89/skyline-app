@@ -88,7 +88,9 @@ function * getMyAppsHandler() {
       payload: apps.data,
     });
 
-  } catch(e) {}
+  } catch(e) {
+    console.log(e)
+  }
 }
 
 interface CreateApp {
@@ -306,6 +308,7 @@ function * terminateHostingHandler({ payload }: TerminateHostingProps) {
       .service('aws/environment')
       .patch(payload.environment_id, {
         hosting_id: null,
+        env_vars: [],
       });
 
     yield call(patchEnvironment);
@@ -316,6 +319,7 @@ function * terminateHostingHandler({ payload }: TerminateHostingProps) {
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
   } catch(e) {
+    console.log(e);
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }
@@ -349,6 +353,7 @@ function * deleteAppHandler({ payload }: DeleteAppProps) {
 
     yield put({ type: ActionTypes.SET_MY_APPS, payload: updatedApps });
   } catch(e) {
+    console.log(e);
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }

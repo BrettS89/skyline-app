@@ -14,7 +14,7 @@ const useStyles = makeStyles({
   toolbar: {
     display: 'flex',
     justifyContent: 'space-between',
-    minHeight: 60
+    minHeight: 60,
   },
   leftItems: {
     display: 'flex',

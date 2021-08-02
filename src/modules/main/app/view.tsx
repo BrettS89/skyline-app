@@ -7,7 +7,7 @@ import Deploy from './components/deploy';
 import EnvVars from './components/env-vars';
 import ProviderStatus from './components/provider-status';
 import Https from './components/https';
-import { render } from '@testing-library/react';
+import Logs from './components/logs';
 
 const AppView = ({ addEc2HttpsListener, addEnvVar, addHttpsListener, app, branches, certificates, connectGithub, deployFields, deleteApp, environment, executePipeline, githubRepos, launchAppHosting, providerStatus, setEnvironment, terminateHosting, updateState, user }) => {
   const classes = useStyles();
@@ -113,6 +113,13 @@ const AppView = ({ addEc2HttpsListener, addEnvVar, addHttpsListener, app, branch
             hosting={environment.resources?.hosting}
           />
         );
+
+      case 'Logs':
+        return (
+          <Logs
+            hosting={environment.resources.hosting}
+          />
+        )
 
       default:
         return renderDeploy();
