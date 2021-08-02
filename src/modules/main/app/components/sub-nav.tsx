@@ -3,11 +3,13 @@ import useStyles from '../styles';
 import CloudIcon from '@material-ui/icons/Cloud';
 import VerifiedUserRoundedIcon from '@material-ui/icons/VerifiedUserRounded';
 import CodeRoundedIcon from '@material-ui/icons/CodeRounded';
+import SubjectRoundedIcon from '@material-ui/icons/SubjectRounded';
 
 const linkNames = [
   { component: 'Deploy', Icon: CloudIcon },
   { component: 'Environment Variables', Icon: CodeRoundedIcon },
   { component: 'HTTPS', Icon: VerifiedUserRoundedIcon },
+  { component: 'Logs', Icon: SubjectRoundedIcon },
 ]
 
 const SubNav = ({ componentName, setComponent }) => {

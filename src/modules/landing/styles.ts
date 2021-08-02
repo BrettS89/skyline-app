@@ -1,30 +1,46 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles({
-  tron: {
-    marginBottom: 60,
-    height: 170,
-    borderBottom: '1px solid lightgray',
-    padding: 50,
+  landingPage: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%'
+  },
+  jumbotronSection: {
+    display: 'flex',
+    backgroundColor: '#5367FF',
+    height: 500,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 80,
+  },
+  jumboContent: {
+    display: 'flex',
+    width: '100%',
+    maxWidth: 1200,
+    color: '#fff',
+  },
+  jumboLeft: {
+    width: '50%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    paddingRight: 20
+  },
+  jumboTitle: {
+    marginBottom: 20,
+  },
+  accessButton: {
+    color: '#fff',
+    width: 200,
+  },
+  jumboRight: {
+    width: '50%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  title: {
-    marginBottom: 15,
-    textAlign: 'center'
-  },
-  subTitle: {
-    marginBottom: 20,
-  },
-  leftButton: {
-    marginRight: 5,
-    marginBottom: 20
-  },
-  rightButton: {
-    marginLeft: 5, 
-    marginBottom: 20
+    paddingLeft: 20,
   },
   infoColumns: {
     display: 'flex',
@@ -41,33 +57,43 @@ export default makeStyles({
   infoColumnTitle: {
     marginBottom: 7,
   },
-  benefitContainer: {
+  iconsSection: {
     display: 'flex',
-    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: 80,
   },
-  benefit: {
-    backgroundColor: '#5367FF',
+  iconsContent: {
+    display: 'flex',
+    justifyContent: 'space-between',
     width: '100%',
-    padding: 30,
-    color: '#fff',
-    height: 60,
-    borderRadius: 4,
-    marginBottom: 85,
+    maxWidth: 1200,
+  },
+  bannerSection: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#e0e0e0',
+    height: 150,
+    marginBottom: 80,
+  },
+  featuresSection: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
   },
   supported: {
     display: 'flex',
+    width: '100%',
     justifyContent: 'space-between',
-    borderBottom: '1px solid lightgray',
-    paddingBottom: 60,
-    marginBottom: 60
+    maxWidth: 1200,
+    // borderBottom: '1px solid lightgray',
+    // paddingBottom: 80,
+    marginBottom: 80
   },
   supportedSection: {
     display: 'flex',
     flexDirection: 'column',
-    // width: 265
   },
   supportedTitle: {
     marginBottom: 10,
@@ -80,13 +106,22 @@ export default makeStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    marginBottom: 80,
   },
   videoTitleSection: {
     display: 'flex',
     width: '100%',
+    maxWidth: 1200,
     justifyContent: 'flex-start'
   },
   videoTitle: {
-    marginBottom: 60,
+    marginBottom: 40,
+  },
+  footer: {
+    display: 'flex',
+    height: 70,
+    backgroundColor: '#e0e0e0',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

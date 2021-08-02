@@ -124,7 +124,7 @@ const Https = ({ addEc2HttpsListener, addHttpsListener, certificates, hosting })
   const renderNoHosting2 = () => (
     <>
       <Typography>
-        You must launch an AWS environment to configure HTTPS forwarding.
+        Launch an AWS environment to configure HTTPS forwarding.
       </Typography>
     </>
   );

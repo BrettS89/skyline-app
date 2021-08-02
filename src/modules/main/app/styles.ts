@@ -114,6 +114,33 @@ const useStyles = makeStyles({
     fontStyle: 'italic',
     marginTop: 15,
     fontSize: 14,
+  },
+  instanceRow: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  viewLogsButton: {
+    marginLeft: 5
+  },
+  logModal: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+  },
+  modalContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+  },
+  logsContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    overflowY: 'auto',
+  },
+  logsText: {
+    fontSize: 14,
   }
 });
 
