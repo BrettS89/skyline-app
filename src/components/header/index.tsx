@@ -18,7 +18,7 @@ const Header = (props: any) => {
       return;
     }
 
-    if (!window.location.pathname.includes('apps')) {
+    if (!window.location.pathname.includes('app') && !window.location.pathname.includes('ssl')) {
       return;
     }
 
