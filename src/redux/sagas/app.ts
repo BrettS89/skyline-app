@@ -3,6 +3,7 @@ import {
 } from 'redux-saga/effects';
 import _ from 'lodash';
 import api from '../../feathers';
+import { githubRedirectUrl } from '../../config';
 import { UserState } from '../reducers/user';
 import { AppState } from '../reducers/app';
 import { ActionTypes } from '../actions';
@@ -224,7 +225,7 @@ function * connectGithubHandler({ payload }: ConnectGithubProps) {
     const fn = () => api.service('github/client-id').find();
     const { client_id } = yield call(fn);
     //@ts-ignore
-    window.location = `https://github.com/login/oauth/authorize?client_id=${client_id}&redirect_uri=${process.env.REACT_APP_GITHUB_REDIRECT_URL}${payload}&state=scsa&scope=repo%20admin:repo_hook`;
+    window.location = `https://github.com/login/oauth/authorize?client_id=${client_id}&redirect_uri=${githubRedirectUrl}${payload}&state=scsa&scope=repo%20admin:repo_hook`;
   } catch(e) {
   }
 }
