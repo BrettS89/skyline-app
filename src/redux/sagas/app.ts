@@ -83,7 +83,7 @@ function * getMyAppsHandler() {
     });
 
     const apps = yield call(fn);
-
+    
     yield put({
       type: ActionTypes.SET_MY_APPS,
       payload: apps.data,

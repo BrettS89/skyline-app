@@ -73,7 +73,8 @@ export default makeStyles({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#5367FF',
+    color: '#fff',
     height: 150,
     marginBottom: 80,
   },
@@ -87,8 +88,6 @@ export default makeStyles({
     width: '100%',
     justifyContent: 'space-between',
     maxWidth: 1200,
-    // borderBottom: '1px solid lightgray',
-    // paddingBottom: 80,
     marginBottom: 80
   },
   supportedSection: {

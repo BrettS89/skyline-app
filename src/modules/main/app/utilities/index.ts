@@ -1,11 +1,11 @@
 export const appTypes = [
   {
     name: 'Docker',
-    value:'64bit Amazon Linux 2 v3.4.3 running Docker',
+    value:'64bit Amazon Linux 2 v3.4.4 running Docker',
   },
   {
     name: 'Node.js',
-    value: '64bit Amazon Linux 2 v5.4.3 running Node.js 14',
+    value: '64bit Amazon Linux 2 v5.4.4 running Node.js 14',
   },
 ];
 
@@ -25,6 +25,18 @@ export const environmentTypes = [
   {
     name: 'EC2 Medium - $30.37/month',
     value: 't3.medium',
+  },
+  {
+    name: 'EC2 Large - $60.74/month',
+    value: 't3.large',
+  },
+  {
+    name: 'EC2 X-Large - $121.47/month',
+    value: 't3.xlarge',
+  },
+  {
+    name: 'EC2 2X-Large - $242.94/month',
+    value: 't3.2xlarge',
   },
   {
     name: 'Elastic Beanstalk - autoscale',
