@@ -44,12 +44,13 @@ const authorization = (ChildComponent: any) => {
             
             setFinishedAuth(true)
           } catch(e) {
-            console.log('error', e);
+            localStorage.clear();
             dispatch({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });  
             props.history.push('/');
           }
         }
         if (!role) {
+          localStorage.clear();
           props.history.push('/');
         }
 
