@@ -14,9 +14,9 @@ const restClient = rest(url);
 app.configure(restClient.fetch(window.fetch));
 
 const setAuthHeader = (context: any) => {
-  context.params.headers = Object.assign({}, {
+  context.params.headers = Object.assign({}, context.params.headers, {
     'authorization': localStorage.getItem('token'),
-  }, context.params.headers);
+  });
   return context;
 }
 

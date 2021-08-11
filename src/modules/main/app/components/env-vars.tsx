@@ -58,7 +58,7 @@ const EnvVars = ({ addEnvVar, environment }) => {
           variant='outlined'
           onClick={() => setAddingEnvVar(true)}
         >
-          Add env var
+          Add environment variables
         </Button>
       </div>
     )

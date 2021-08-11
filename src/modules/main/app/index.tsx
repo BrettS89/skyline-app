@@ -15,7 +15,7 @@ const App = (props: any) => {
   const app = apps.myApps.find((a) => a._id === app_id);
 
   //@ts-ignore
-  const [healthInterval, setHealthInterval] = useState(setInterval(() => [], 5000));
+  const [healthInterval, setHealthInterval] = useState(setInterval(() => [], 6000));
   const [environment, setEnvironment] = useState(null);
   const [appType, setAppType] = useState(null);
   const [autoDeploy, setAutoDeploy] = useState(false);
@@ -113,7 +113,7 @@ const App = (props: any) => {
     setEnvironment(env);
     getEnvironmentDetails(env);
     clearInterval(healthInterval);
-    setHealthInterval(setInterval(() => getEnvironmentDetails(env), 5000));
+    setHealthInterval(setInterval(() => getEnvironmentDetails(env), 6000));
   };
 
   const getBranches = async (url: string) => {
@@ -239,13 +239,13 @@ const App = (props: any) => {
       setEnvironment(app?.environments?.[0]);
       getEnvironmentDetails(app?.environments?.[0]);
       clearInterval(healthInterval);
-      setHealthInterval(setInterval(() => getEnvironmentDetails(app?.environments?.[0]), 5000));
+      setHealthInterval(setInterval(() => getEnvironmentDetails(app?.environments?.[0]), 6000));
     } else if (environment) {
       const env = app.environments.find(e => e._id === environment._id);
       setEnvironment(env);
       getEnvironmentDetails(env);
       clearInterval(healthInterval);
-      setHealthInterval(setInterval(() => getEnvironmentDetails(env), 5000));
+      setHealthInterval(setInterval(() => getEnvironmentDetails(env), 6000));
     }
   }, [app]);
 
