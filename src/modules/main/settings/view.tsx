@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
-const SettingsView = ({ patchUser, user }) => {
+const SettingsView = ({ logout, patchUser, user }) => {
   const classes = useStyles();
 
   const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
@@ -91,7 +91,11 @@ const SettingsView = ({ patchUser, user }) => {
         {renderAwsSection()}
       </div>
       <div>
-        <Button variant='outlined' color='primary'>
+        <Button
+          variant='outlined'
+          color='primary'
+          onClick={logout}
+        >
           Log out
         </Button>
       </div>

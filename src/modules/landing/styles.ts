@@ -12,7 +12,7 @@ export default makeStyles({
     height: 500,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 80,
+    marginBottom: 110,
   },
   jumboContent: {
     display: 'flex',
@@ -45,7 +45,7 @@ export default makeStyles({
   infoColumns: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: 60,
+    marginBottom: 90,
   },
   infoColumn: {
     display: 'flex',
@@ -61,7 +61,7 @@ export default makeStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginBottom: 80,
+    marginBottom: 110,
   },
   iconsContent: {
     display: 'flex',
@@ -76,7 +76,7 @@ export default makeStyles({
     backgroundColor: '#5367FF',
     color: '#fff',
     height: 150,
-    marginBottom: 80,
+    marginBottom: 110,
   },
   featuresSection: {
     display: 'flex',
@@ -88,7 +88,7 @@ export default makeStyles({
     width: '100%',
     justifyContent: 'space-between',
     maxWidth: 1200,
-    marginBottom: 80
+    marginBottom: 110
   },
   supportedSection: {
     display: 'flex',
@@ -105,7 +105,7 @@ export default makeStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginBottom: 80,
+    marginBottom: 110,
   },
   videoTitleSection: {
     display: 'flex',

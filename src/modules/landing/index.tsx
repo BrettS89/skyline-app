@@ -9,7 +9,7 @@ import AutorenewIcon from '@material-ui/icons/Autorenew';
 
 import FilterDramaRoundedIcon from '@material-ui/icons/FilterDramaRounded';
 
-const Landing2 = () => {
+const Landing = (props) => {
   const classes = useStyles();
 
   return (
@@ -19,7 +19,15 @@ const Landing2 = () => {
           <div className={classes.jumboLeft}>
             <Typography variant='h2' className={classes.jumboTitle}>Deploy to AWS with Skyline</Typography>
             <Typography variant='h5' className={classes.jumboTitle}>The easiest way for developers to deploy applications to AWS.</Typography>
-            <Button variant='outlined' color='inherit' size='large' className={classes.accessButton}>Create an account</Button>
+            <Button
+              variant='outlined'
+              color='inherit'
+              size='large'
+              className={classes.accessButton}
+              onClick={() => props.history.push('/signup')}
+            >
+                Create an account
+            </Button>
           </div>
           <div className={classes.jumboRight}>
             <FilterDramaRoundedIcon style={{ fontSize: 350 }} />
@@ -102,4 +110,4 @@ const Landing2 = () => {
   );
 };
 
-export default Landing2;
+export default Landing;
