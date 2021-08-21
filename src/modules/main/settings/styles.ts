@@ -22,5 +22,17 @@ export default makeStyles({
     color: 'gray',
     fontStyle: 'italic',
     marginBottom: 15,
+  },
+  cancelButton: {
+    color: 'red',
+    borderColor: 'red',
+    marginTop: 15,
+  },
+  key: {
+    // color: 'gray',
+  },
+  value: {
+    color: 'gray',
+    fontStyle: 'italic',
   }
 });

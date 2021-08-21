@@ -54,9 +54,9 @@ export const features = [
     productionCheck: true,
   },
   {
-    feature: 'Support for up to 9 AWS environments',
+    feature: 'Support for up to 20 AWS environments',
     sandboxCheck: false,
-    developmentCheck: true,
+    developmentCheck: false,
     productionCheck: true,
   },
   {

@@ -35,7 +35,15 @@ const useStyles = makeStyles({
   },
   userIcon: {
     marginLeft: 25,
-  }
+  },
+  planText: {
+    paddingLeft: 8,
+    paddingRight: 8,
+    paddingBottom: 8,
+    paddingTop: 6,
+    marginLeft: 10,
+    fontSize: 14,
+  },
 });
 
 export default useStyles;

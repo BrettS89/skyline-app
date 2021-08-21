@@ -1,11 +1,20 @@
-import useStyles from './styles';
+import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
+import { StoreState } from '../../redux';
+import useStyles from './styles';
 import Button from '@material-ui/core/Button';
 import { features } from './utilities';
 import FeatureRow from './components/row';
 
 const SubscribeView = ({ navigate }) => {
   const classes = useStyles();
+
+  const user = useSelector((state: StoreState) => state.user.details);
+
+  const subscribedToDevelopment =
+    user?.plan?.plan === 'development' ?? user?.plan?.plan === 'production';
+
+  const subscribedToProduction = user?.plan?.plan === 'production';
 
   return (
     <div className='container'>
@@ -23,8 +32,10 @@ const SubscribeView = ({ navigate }) => {
               color='primary'
               size='large'
               onClick={() => navigate('sandbox')}
+              disabled={!!user}
+              className={classes.btn}
             >
-              Subscribe
+              Sign up
             </Button>
           </div>
           <div className={classes.headerColumn}>
@@ -36,6 +47,7 @@ const SubscribeView = ({ navigate }) => {
               color='primary'
               size='large'
               onClick={() => navigate('development')}
+              disabled={subscribedToDevelopment}
             >
               Subscribe
             </Button>
@@ -49,6 +61,7 @@ const SubscribeView = ({ navigate }) => {
               color='primary'
               size='large'
               onClick={() => navigate('production')}
+              disabled={subscribedToProduction}
             >
               Subscribe
             </Button>

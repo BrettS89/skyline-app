@@ -9,7 +9,12 @@ import { ActionTypes } from '../actions';
 export default [
   patchUserWatcher,
   getGithubReposWatcher,
+  softAuthorizationWatcher,
 ];
+
+function * softAuthorizationWatcher() {
+  yield takeLatest(ActionTypes.SOFT_AUTHORIZATION, softAuthorizationHandler);
+}
 
 function * patchUserWatcher() {
   yield takeLatest(ActionTypes.PATCH_USER, patchUserHandler);
@@ -17,6 +22,42 @@ function * patchUserWatcher() {
 
 function * getGithubReposWatcher() {
   yield takeLatest(ActionTypes.GET_GITHUB_REPOS, getGithubReposHandler)
+}
+
+function * softAuthorizationHandler() {
+  try {
+    const authorizeFn = () => api
+      .service('security/session')
+      .find();
+
+    const user = yield select(userSelector);
+
+    if (!user.details) {
+      const { data } = yield call(authorizeFn);
+
+      yield put({
+        type: ActionTypes.SET_USER,
+        payload: data,
+      });
+
+      // GET MY APPS
+      yield put({
+        type: ActionTypes.GET_MY_APPS,
+      });
+
+      yield put({
+        type: ActionTypes.GET_CERTIFICATES,
+      });
+
+      // GET GITHUB REPOS
+      if (data.github_access_key) {
+        yield put({
+          type: ActionTypes.GET_GITHUB_REPOS,
+        });
+      }
+    }
+
+  } catch(e) {}
 }
 
 interface PatchUserProps {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { usePaymentInputs } from 'react-payment-inputs';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField'
@@ -10,12 +11,33 @@ const prices = {
   'production': '20.00',
 };
 
-const CheckoutView = ({ plan }) => {
+const CheckoutView = ({ checkout, plan }) => {
   const classes = useStyles();
+  const { meta, getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
 
   const [cardNumber, setCardNumber] = useState('');
   const [expDate, setExpDate] = useState('');
-  const [cvc, setCvc] = useState();
+  const [cvc, setCvc] = useState('');
+
+  const handleChange = (e) => {
+    const fnMap = {
+      cardNumber: setCardNumber,
+      expiryDate: setExpDate,
+      cvc: setCvc
+    };
+
+    const changeFn = fnMap[e.target.name];
+
+    if (!changeFn) {
+      return;
+    }
+
+    changeFn(e.target.value);
+  };
+
+  const handleCheckout = () => {
+    checkout(cardNumber, expDate, cvc);
+  };
 
   return (
     <div className='container'>
@@ -48,27 +70,30 @@ const CheckoutView = ({ plan }) => {
             <Typography className={classes.label}>Card number</Typography>
             <TextField
               variant='outlined'
-              placeholder='1234 5678 9012 3456'
               size='small'
               className={classes.textInput}
+              inputProps={getCardNumberProps({ onChange: handleChange })}
+              value={cardNumber}
             />
           </div>
           <div className={classes.cardInput}>
             <Typography className={classes.label}>Expiration date</Typography>
             <TextField
               variant='outlined'
-              placeholder='MM/YY'
               size='small'
               className={classes.textInput}
+              inputProps={getExpiryDateProps({ onChange: handleChange })}
+              value={expDate}
             />
           </div>
           <div className={classes.cardInput}>
             <Typography className={classes.label}>CVC</Typography>
             <TextField
               variant='outlined'
-              placeholder='123'
               size='small'
               className={classes.textInput}
+              inputProps={getCVCProps({ onChange: handleChange })}
+              value={cvc}
             />
           </div>
           <Button
@@ -76,6 +101,7 @@ const CheckoutView = ({ plan }) => {
             color='primary'
             disableElevation
             className={classes.button}
+            onClick={handleCheckout}
           >
             Subscribe
           </Button>

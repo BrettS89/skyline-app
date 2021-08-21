@@ -3,12 +3,15 @@ import useStyles from './styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import { capitalize } from '../../../utilities';
 
-const SettingsView = ({ logout, patchUser, user }) => {
+const SettingsView = ({ cancelSubscription, logout, patchUser, user }) => {
   const classes = useStyles();
 
   const [awsAccessKeyId, setAwsAccessKeyId] = useState('');
   const [awsSecretAccessKey, setAwsSecretAccessKey] = useState('');
+
+  const plan = user?.plan?.plan ?? 'Sandbox';
 
   const onAddCredentials = () => {
     patchUser({
@@ -79,6 +82,25 @@ const SettingsView = ({ logout, patchUser, user }) => {
       ? renderCredentialsAdded()
       : renderAwsConnectForm();
 
+  const renderCancelButton = () => {
+    const render = user?.plan?.plan === 'development' || user?.plan?.plan === 'production';
+
+    console.log(render);
+
+    if (render) {
+      return (
+        <Button
+          variant='outlined'
+          className={classes.cancelButton}
+          disableElevation
+          onClick={cancelSubscription}
+        >
+          Cancel subscription
+        </Button>
+      );
+    }
+  };
+
   return (
     <div className='container'>
       <Typography variant='h5' className='title-margin'>
@@ -89,6 +111,15 @@ const SettingsView = ({ logout, patchUser, user }) => {
           AWS Connection
         </Typography>
         {renderAwsSection()}
+      </div>
+      <div className={classes.section}>
+        <Typography className={classes.label}>
+          Subscription
+        </Typography>
+        <Typography className={classes.key}>
+          Plan: <span className={classes.value}>{capitalize(plan)}</span>
+        </Typography>
+        {renderCancelButton()}
       </div>
       <div>
         <Button

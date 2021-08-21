@@ -6,6 +6,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ErrorOutlineRoundedIcon from '@material-ui/icons/ErrorOutlineRounded';
 import { StoreState } from '../../redux';
 import useStyles from './styles';
+import { capitalize } from '../../utilities';
 
 const Header = (props: any) => {
   const classes = useStyles();
@@ -33,11 +34,23 @@ const Header = (props: any) => {
     );
   };
 
+  const getPlan = () => {
+    return user?.plan?.plan
+      ? capitalize(user?.plan?.plan)
+      : 'Sandbox';
+  }
+
   const notLoggedIn = () => {
     if (token) return;
 
     return (
       <div className={classes.rightItems}>
+        <Button
+          className={classes.link}
+          onClick={() => props.history.push('/subscriptions')}
+        >
+          Pricing
+        </Button>
         <Button
           className={classes.link}
           onClick={() => props.history.push('/login')}
@@ -75,6 +88,9 @@ const Header = (props: any) => {
         >
           SSL Certificates
         </Button>
+        <Typography className={classes.planText}>
+          Plan: {getPlan()}
+        </Typography>
         <div
           className={`hover ${classes.userIcon}`}
           onClick={() => props.history.push('/settings')}

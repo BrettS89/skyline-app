@@ -1,3 +1,4 @@
+import authorizationSoft from '../../components/authorization-soft';
 import SubscribeView from './view';
 
 const Subscribe = (props) => {
@@ -16,4 +17,4 @@ const Subscribe = (props) => {
   );
 };
 
-export default Subscribe;
+export default authorizationSoft(Subscribe);

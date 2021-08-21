@@ -15,7 +15,7 @@ export default () => {
   return (
     <Switch>
       <Route exact path="/checkout/:plan" component={Checkout} />
-      <Route exact path="/subscriptions" component={Subscribe} />
+      <Route exact path="/pricing" component={Subscribe} />
       <Route exact path="/settings" component={Settings} />
       <Route exact path="/ssl-certificates" component={SSLCerts} />
       <Route exact path="/create-app" component={CreateApp} />

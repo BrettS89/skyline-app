@@ -37,4 +37,7 @@ export default makeStyles({
     display: 'flex',
     justifyContent: 'center',
   },
+  btn: {
+    width: 110,
+  }
 });

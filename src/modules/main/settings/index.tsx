@@ -14,13 +14,20 @@ const Settings = (props) => {
     });
   };
 
+  const cancelSubscription = () => {
+    dispatch({
+      type: ActionTypes.CANCEL_SUBSCRIPTION,
+    })
+  }
+
   const logout = () => {
     localStorage.clear();
     props.history.push('/');
-  }
+  };
 
   return (
     <View
+      cancelSubscription={cancelSubscription}
       logout={logout}
       patchUser={patchUser}
       user={user}
