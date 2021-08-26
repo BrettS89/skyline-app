@@ -27,6 +27,7 @@ interface SubscribeProps {
     expDate: string;
     cvc: string;
     plan: string;
+    navigate(): void;
   };
 }
 
@@ -79,6 +80,14 @@ function * subscribeToPlanHandler({ payload }: SubscribeProps) {
     });
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
+
+    payload.navigate();
+
+    yield put({
+      type: ActionTypes.SET_APP_INFO,
+      payload: `You were successfully subscribed to the ${payload.plan} plan`,
+    });
+
   } catch(e) {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });

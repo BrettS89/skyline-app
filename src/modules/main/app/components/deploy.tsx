@@ -3,7 +3,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import useStyles from '../styles';
 import { appTypes, environmentTypes } from '../utilities';
 
-const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHosting }) => {
+const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHosting, user }) => {
   const classes = useStyles();
 
   return (
@@ -17,6 +17,7 @@ const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHos
           options={environmentTypes}
           getOptionLabel={(option: any) => option.name}
           onChange={(event, newValue) => updateState('provider', newValue ?? null)}
+          getOptionDisabled={(option: any) => option.name.includes('Elastic') && user?.plan?.plan !== 'production'}
           renderInput={(params) => (
             <TextField
               className={classes.longDropdown}

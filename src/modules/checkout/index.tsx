@@ -7,6 +7,10 @@ const Checkout = (props) => {
   const dispatch = useDispatch();
   const plan = props.match.params.plan;
 
+  const navigate = () => {
+    props.history.push('/apps');
+  };
+
   const onCheckout = (card: string, expDate: string, cvc: string) => {
     dispatch({
       type: ActionTypes.SUBSCRIBE_TO_PLAN,
@@ -15,6 +19,7 @@ const Checkout = (props) => {
         expDate,
         cvc,
         plan,
+        navigate,
       }
     });
   }

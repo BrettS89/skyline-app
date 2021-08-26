@@ -1,7 +1,7 @@
 import { AppBar, Button, Toolbar, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import BarChartRoundedIcon from '@material-ui/icons/BarChartRounded';
+// import BarChartRoundedIcon from '@material-ui/icons/BarChartRounded';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ErrorOutlineRoundedIcon from '@material-ui/icons/ErrorOutlineRounded';
 import { StoreState } from '../../redux';
@@ -36,8 +36,8 @@ const Header = (props: any) => {
 
   const getPlan = () => {
     return user?.plan?.plan
-      ? capitalize(user?.plan?.plan)
-      : 'Sandbox';
+      ? <span className={classes.planName}>{capitalize(user?.plan?.plan)}</span>
+      : <span className={classes.planName}>Sandbox</span>;
   }
 
   const notLoggedIn = () => {
@@ -47,7 +47,7 @@ const Header = (props: any) => {
       <div className={classes.rightItems}>
         <Button
           className={classes.link}
-          onClick={() => props.history.push('/subscriptions')}
+          onClick={() => props.history.push('/pricing')}
         >
           Pricing
         </Button>
@@ -82,12 +82,14 @@ const Header = (props: any) => {
         >
           My Apps
         </Button>
-        <Button
-          className={classes.link}
-          onClick={() => props.history.push('/ssl-certificates')}
-        >
-          SSL Certificates
-        </Button>
+        {user?.plan?.plan === 'production' && (
+          <Button
+            className={classes.link}
+            onClick={() => props.history.push('/ssl-certificates')}
+          >
+            SSL Certificates
+          </Button>
+        )}
         <Typography className={classes.planText}>
           Plan: {getPlan()}
         </Typography>
@@ -105,7 +107,7 @@ const Header = (props: any) => {
     <AppBar elevation={0} color="primary" className={classes.appBar}>
       <Toolbar className={classes.toolbar}>
         <div className={`${classes.leftItems} hover`} onClick={() => props.history.push('/')}>
-          <BarChartRoundedIcon style={{ fontSize: 40, color: 'white', paddingBottom: 1 }} />
+          {/* <BarChartRoundedIcon style={{ fontSize: 40, color: 'white', paddingBottom: 1 }} /> */}
           <Typography className={classes.logo}>
             SKYLINE
           </Typography>

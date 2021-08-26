@@ -5,8 +5,6 @@ const useStyles = makeStyles({
     height: 60
   },
   logo: {
-    paddingTop: 2,
-    marginLeft: 2,
     letterSpacing: 2,
     fontWeight: 600,
     fontSize: 20,
@@ -25,9 +23,8 @@ const useStyles = makeStyles({
     alignItems: 'center',
   },
   beta: {
-    marginLeft: 12,
+    marginLeft: 10,
     fontSize: 14,
-    paddingTop: 1,
   },
   link: {
     color: '#fff',
@@ -44,6 +41,9 @@ const useStyles = makeStyles({
     marginLeft: 10,
     fontSize: 14,
   },
+  planName: {
+    fontStyle: 'italic',
+  }
 });
 
 export default useStyles;

@@ -118,9 +118,19 @@ export default makeStyles({
   },
   footer: {
     display: 'flex',
-    height: 70,
+    flexDirection: 'column',
+    height: 130,
     backgroundColor: '#e0e0e0',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  footerLinks: {
+    display: 'flex',
+    marginBottom: 5,
+  },
+  footerLogo: {
+    letterSpacing: 2,
+    fontWeight: 600,
+    fontSize: 20,
+  }
 });

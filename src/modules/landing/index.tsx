@@ -2,6 +2,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import InfoColumn from './components/info-column';
 import useStyles from './styles';
+import softAuthorization from '../../components/authorization-soft';
 
 import CloudIcon from '@material-ui/icons/Cloud';
 import GitHubIcon from '@material-ui/icons/GitHub';
@@ -101,13 +102,20 @@ const Landing = (props) => {
         >
         </iframe>
       </div>
+
       <div className={classes.footer}>
-        <Typography>
-          Skyline 2021
+        <div className={classes.footerLinks}>
+          <Button size='large' onClick={() => props.history.push('/pricing')}>Pricing</Button>
+          <Button size='large' onClick={() => props.history.push('/terms')}>Terms</Button>
+          <Button size='large' onClick={() => props.history.push('/contact')}>Contact</Button>
+        </div>
+        <Typography className={classes.footerLogo} color='primary'>
+          SKYLINE 2021
         </Typography>
       </div>
+
     </div>
   );
 };
 
-export default Landing;
+export default softAuthorization(Landing);

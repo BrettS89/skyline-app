@@ -12,7 +12,7 @@ const SubscribeView = ({ navigate }) => {
   const user = useSelector((state: StoreState) => state.user.details);
 
   const subscribedToDevelopment =
-    user?.plan?.plan === 'development' ?? user?.plan?.plan === 'production';
+    user?.plan?.plan === 'development' || user?.plan?.plan === 'production';
 
   const subscribedToProduction = user?.plan?.plan === 'production';
 
