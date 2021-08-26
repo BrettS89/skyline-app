@@ -12,10 +12,14 @@ const linkNames = [
   { component: 'Logs', Icon: SubjectRoundedIcon },
 ]
 
-const SubNav = ({ componentName, setComponent }) => {
+const SubNav = ({ componentName, setComponent, user }) => {
   const classes = useStyles();
 
   const renderLinks = () => linkNames.map(({ component, Icon }) => {
+    if (user?.plan?.plan !== 'production' && component === 'HTTPS') {
+      return;
+    }
+
     const color = component === componentName
         ? '#5367FF'
         : 'gray';

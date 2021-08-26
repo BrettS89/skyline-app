@@ -15,4 +15,6 @@ export interface User extends Partial<Resource> {
     access_key_id: string;
     secret_access_key: string;
   }
+  stripe?: Record<string, any>;
+  plan?: Record<string, any>;
 }

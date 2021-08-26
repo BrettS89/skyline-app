@@ -3,7 +3,7 @@ import { StoreState, ActionTypes } from '../../../redux';
 import authorization from '../../../components/authorization';
 import View from './view';
 
-const Settings = () => {
+const Settings = (props) => {
   const dispatch = useDispatch();
   const user = useSelector((state: StoreState) => state.user.details);
 
@@ -14,8 +14,21 @@ const Settings = () => {
     });
   };
 
+  const cancelSubscription = () => {
+    dispatch({
+      type: ActionTypes.CANCEL_SUBSCRIPTION,
+    })
+  }
+
+  const logout = () => {
+    localStorage.clear();
+    props.history.push('/');
+  };
+
   return (
     <View
+      cancelSubscription={cancelSubscription}
+      logout={logout}
       patchUser={patchUser}
       user={user}
     />

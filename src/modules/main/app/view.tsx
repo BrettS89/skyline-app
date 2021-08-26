@@ -54,6 +54,7 @@ const AppView = ({ addEc2HttpsListener, addEnvVar, addHttpsListener, app, branch
         updateState={updateState}
         deployFields={deployFields}
         launchAppHosting={launchAppHosting}
+        user={user}
       />
       </>
     );
@@ -93,7 +94,6 @@ const AppView = ({ addEc2HttpsListener, addEnvVar, addHttpsListener, app, branch
   const renderSection = () => {
     switch(component) {
       case 'Deploy':
-
         return renderDeploy();
 
       case 'Environment Variables':
@@ -151,6 +151,7 @@ const AppView = ({ addEc2HttpsListener, addEnvVar, addHttpsListener, app, branch
           <SubNav
             componentName={component}
             setComponent={setComponent}
+            user={user}
           />
 
           {renderSection()}
