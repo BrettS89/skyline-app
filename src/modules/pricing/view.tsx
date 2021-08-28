@@ -15,6 +15,9 @@ const SubscribeView = ({ navigate }) => {
     user?.plan?.plan === 'development' || user?.plan?.plan === 'production';
 
   const subscribedToProduction = user?.plan?.plan === 'production';
+  const productionButtonText = user?.plan?.plan === 'development'
+    ? 'Upgrade'
+    : 'Subscribe';
 
   return (
     <div className='container'>
@@ -63,7 +66,7 @@ const SubscribeView = ({ navigate }) => {
               onClick={() => navigate('production')}
               disabled={subscribedToProduction}
             >
-              Subscribe
+              {productionButtonText}
             </Button>
           </div>
         </div>
