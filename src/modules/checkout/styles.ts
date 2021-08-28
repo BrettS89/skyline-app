@@ -35,4 +35,14 @@ export default makeStyles({
   button: {
     marginTop: 10,
   },
+  cardInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  proRatedText: {
+    marginTop: 15,
+    color: 'gray',
+    fontStyle: 'italic',
+  }
 });

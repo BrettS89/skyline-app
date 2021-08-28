@@ -10,6 +10,7 @@ import { ActionTypes } from '../actions';
 export default [
   subscribeToPlanWatcher,
   cancelSubscriptionWatcher,
+  upgradeSubscriptionWatcher,
 ];
 
 function * subscribeToPlanWatcher() {
@@ -18,6 +19,10 @@ function * subscribeToPlanWatcher() {
 
 function * cancelSubscriptionWatcher() {
   yield takeLatest(ActionTypes.CANCEL_SUBSCRIPTION, cancelSubscriptionHandler);
+}
+
+function * upgradeSubscriptionWatcher() {
+  yield takeLatest(ActionTypes.UPGRADE_SUBSCRIPTION, upgradeSubscriptionHandler);
 }
 
 interface SubscribeProps {
@@ -123,6 +128,52 @@ function * cancelSubscriptionHandler() {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
   } catch(e) {
     console.log(e);
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
+    yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
+  }
+}
+
+interface UpgradeProps {
+  type: string;
+  payload: {
+    navigate(): void;
+    plan_id: string;
+    plan: string;
+  }
+}
+
+function * upgradeSubscriptionHandler({ payload }: UpgradeProps) {
+  try {
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message: 'Upgrading your subscription' } });
+    const user: UserState = yield select(userSelector);
+    const userClone = _.cloneDeep(user);
+
+    const upgradeSubscription = () => api
+      .service('payment/plan')
+      .patch(payload.plan_id, {
+        plan: payload.plan,
+      });
+
+    const plan = yield call(upgradeSubscription);
+
+    userClone.details.plan = plan;
+
+    console.log(userClone)
+
+    yield put({
+      type: ActionTypes.SET_USER,
+      payload: userClone.details,
+    });
+
+    yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
+
+    payload.navigate();
+
+    yield put({
+      type: ActionTypes.SET_APP_INFO,
+      payload: 'Your subscription was successfully upgraded',
+    });
+  } catch(e) {
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: false } });
     yield put({ type: ActionTypes.SET_APP_ERROR, payload: e.message });
   }

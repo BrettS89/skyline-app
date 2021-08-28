@@ -5,13 +5,14 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField'
 import useStyles from './styles';
 import { capitalize } from '../../utilities';
+import CreditCardRoundedIcon from '@material-ui/icons/CreditCardRounded';
 
 const prices = {
   'development': '10.00',
   'production': '20.00',
 };
 
-const CheckoutView = ({ checkout, plan }) => {
+const CheckoutView = ({ checkout, onUpgrade, plan, user }) => {
   const classes = useStyles();
   const { meta, getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
 
@@ -39,6 +40,80 @@ const CheckoutView = ({ checkout, plan }) => {
     checkout(cardNumber, expDate, cvc);
   };
 
+  const renderSubscribe = () => (
+    <>
+      <Typography variant='h5' className='title-margin'>
+        Payment Information
+      </Typography>
+      <div className={classes.cardInput}>
+        <Typography className={classes.label}>Card number</Typography>
+        <TextField
+          variant='outlined'
+          size='small'
+          className={classes.textInput}
+          inputProps={getCardNumberProps({ onChange: handleChange })}
+          value={cardNumber}
+        />
+      </div>
+      <div className={classes.cardInput}>
+        <Typography className={classes.label}>Expiration date</Typography>
+        <TextField
+          variant='outlined'
+          size='small'
+          className={classes.textInput}
+          inputProps={getExpiryDateProps({ onChange: handleChange })}
+          value={expDate}
+        />
+      </div>
+      <div className={classes.cardInput}>
+        <Typography className={classes.label}>CVC</Typography>
+        <TextField
+          variant='outlined'
+          size='small'
+          className={classes.textInput}
+          inputProps={getCVCProps({ onChange: handleChange })}
+          value={cvc}
+        />
+      </div>
+      <Button
+        variant='contained'
+        color='primary'
+        disableElevation
+        className={classes.button}
+        onClick={handleCheckout}
+        disabled={user?.plan?.plan === 'production'}
+      >
+        Subscribe
+      </Button>
+    </>
+  );
+
+  const renderUpgrade = () => (
+    <>
+      <Typography variant='h5' className='title-margin'>
+        Card on File
+      </Typography>
+      <div className={classes.cardInfo}>
+        <CreditCardRoundedIcon style={{ fontSize: 32, marginRight: 10 }} />
+        <Typography>
+          {user?.stripe?.card_brand} ending in {user?.stripe?.card_last_4}
+        </Typography>
+      </div>
+      <Button
+        variant='contained'
+        color='primary'
+        disableElevation
+        className={classes.button}
+        onClick={onUpgrade}
+      >
+        Upgrade plan
+      </Button>
+      <Typography className={classes.proRatedText}>
+        The addtional cost for the upgraded plan in the current month will be pro-rated and added to next month's bill. 
+      </Typography>
+    </>
+  );
+
   return (
     <div className='container'>
       <div className={classes.content}>
@@ -63,48 +138,11 @@ const CheckoutView = ({ checkout, plan }) => {
           </div>
         </div>
         <div className={classes.right}>
-          <Typography variant='h5' className='title-margin'>
-            Payment Information
-          </Typography>
-          <div className={classes.cardInput}>
-            <Typography className={classes.label}>Card number</Typography>
-            <TextField
-              variant='outlined'
-              size='small'
-              className={classes.textInput}
-              inputProps={getCardNumberProps({ onChange: handleChange })}
-              value={cardNumber}
-            />
-          </div>
-          <div className={classes.cardInput}>
-            <Typography className={classes.label}>Expiration date</Typography>
-            <TextField
-              variant='outlined'
-              size='small'
-              className={classes.textInput}
-              inputProps={getExpiryDateProps({ onChange: handleChange })}
-              value={expDate}
-            />
-          </div>
-          <div className={classes.cardInput}>
-            <Typography className={classes.label}>CVC</Typography>
-            <TextField
-              variant='outlined'
-              size='small'
-              className={classes.textInput}
-              inputProps={getCVCProps({ onChange: handleChange })}
-              value={cvc}
-            />
-          </div>
-          <Button
-            variant='contained'
-            color='primary'
-            disableElevation
-            className={classes.button}
-            onClick={handleCheckout}
-          >
-            Subscribe
-          </Button>
+          {
+            user?.plan?.plan === 'development'
+              ? renderUpgrade()
+              : renderSubscribe()
+          }
         </div>
       </div>
     </div>
