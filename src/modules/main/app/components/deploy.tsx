@@ -1,7 +1,7 @@
 import { Button, Checkbox, TextField, Typography } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import useStyles from '../styles';
-import { appTypes, environmentTypes } from '../utilities';
+import { appTypes, awsRegions, environmentTypes } from '../utilities';
 
 const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHosting, user }) => {
   const classes = useStyles();
@@ -23,6 +23,21 @@ const Deploy = ({ updateState, githubRepos, branches, deployFields, launchAppHos
               className={classes.longDropdown}
               size="small" {...params}
               placeholder="Deploy to"
+              variant="outlined"
+            />
+          )}
+        />
+        <Autocomplete
+          size="small"
+          options={awsRegions}
+          getOptionLabel={(option: any) => option.name}
+          onChange={(event, newValue) => updateState('region', newValue?.value ?? null)}
+          // getOptionDisabled={(option: any) => option.name.includes('Elastic') && user?.plan?.plan !== 'production'}
+          renderInput={(params) => (
+            <TextField
+              className={classes.longDropdown}
+              size="small" {...params}
+              placeholder="AWS region"
               variant="outlined"
             />
           )}

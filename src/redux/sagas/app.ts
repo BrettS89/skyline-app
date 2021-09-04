@@ -235,6 +235,7 @@ interface LaunchAppHostingProps {
   payload: {
     application_name: string;
     auto_deploy: boolean;
+    aws_region: string;
     github_account: string;
     github_repo: string;
     repo_branch: string;
@@ -254,6 +255,7 @@ function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
     if (!payload.provider_type) throw new Error('You must select a "Deploy to" environment.');
     if (!payload.app_type) throw new Error('You must select an applicaiton type.');
     if (!payload.github_repo || !payload.repo_branch) throw new Error('You must select both a Github repo and branch to launch an AWS environment.');
+    if (!payload.aws_region) throw new Error('You must specify an AWS region.');
 
     yield put({ type: ActionTypes.SET_APP_LOADING, payload: { status: true, message: 'Launching your AWS environment' } });
     const fn = () => api
@@ -261,6 +263,7 @@ function * launchAppHostingHandler({ payload }: LaunchAppHostingProps) {
       .create({
         application_name: payload.application_name,
         auto_deploy: payload.auto_deploy,
+        aws_region: payload.aws_region,
         github_account: payload.github_account,
         github_repo: payload.github_repo,
         repo_branch: payload.repo_branch,

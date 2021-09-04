@@ -52,3 +52,22 @@ export const defaultProviderStatus = {
   status: 'Fetching...',
   health: 'grey'
 };
+
+export const awsRegions = [
+  {
+    name: 'us-east-1 (Virginia)',
+    value: 'us-east-1',
+  },
+  {
+    name: 'us-east-2 (Ohio)',
+    value: 'us-east-2',
+  },
+  {
+    name: 'us-west-1 (N.California)',
+    value: 'us-west-1',
+  },
+  {
+    name: 'us-west-2 (Oregon)',
+    value: 'us-west-2',
+  },
+];

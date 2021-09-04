@@ -24,4 +24,9 @@ export default makeStyles({
     marginTop: 15,
     marginBottom: 15,
   },
+  termsContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: 15,
+  }
 });
