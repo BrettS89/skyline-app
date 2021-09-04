@@ -109,7 +109,7 @@ const CheckoutView = ({ checkout, onUpgrade, plan, user }) => {
         Upgrade plan
       </Button>
       <Typography className={classes.proRatedText}>
-        The addtional cost for the upgraded plan in the current month will be pro-rated and added to next month's bill. 
+        You will be charged today for the pro-rated amount for the updgraded plan based on the remaining days in you billing cycle. 
       </Typography>
     </>
   );

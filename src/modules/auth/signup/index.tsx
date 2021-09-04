@@ -84,6 +84,15 @@ const Signup = (props) => {
               Sign Up
             </Button>          
         </form>
+
+        <div className={classes.termsContainer}>
+          <Button color='primary'
+            onClick={() => props.history.push('/terms')}
+          >
+            Terms and Conditions
+          </Button>
+        </div>
+        
       </div>
     </div>
   );

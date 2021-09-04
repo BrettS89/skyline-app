@@ -17,6 +17,7 @@ const App = (props: any) => {
   //@ts-ignore
   const [healthInterval, setHealthInterval] = useState(setInterval(() => [], 6000));
   const [environment, setEnvironment] = useState(null);
+  const [region, setRegion] = useState(null);
   const [appType, setAppType] = useState(null);
   const [autoDeploy, setAutoDeploy] = useState(false);
   const [branch, setBranch] = useState(null);
@@ -31,6 +32,7 @@ const App = (props: any) => {
     branch: setBranch,
     provider: setProvider,
     repository: setRepository,
+    region: setRegion,
   };
 
   type stateVal =
@@ -95,10 +97,13 @@ const App = (props: any) => {
       return;
     };
 
+    console.log(environment);
+
+
     try {
       const status = await api
         .service('aws/status')
-        .find({ query: { environment: providerEnvironment, aws_region: environment?.aws_region || env?.aws_region} });
+        .find({ query: { environment: providerEnvironment, aws_region: env?.aws_region || environment?.aws_region } });
 
         setProviderStatus({
         ...defaultProviderStatus,
@@ -111,8 +116,8 @@ const App = (props: any) => {
 
   const setAppEnvironment = (env: Record<string, any>) => {
     setEnvironment(env);
-    getEnvironmentDetails(env);
     clearInterval(healthInterval);
+    getEnvironmentDetails(env);
     setHealthInterval(setInterval(() => getEnvironmentDetails(env), 6000));
   };
 
@@ -137,6 +142,7 @@ const App = (props: any) => {
         app_id: app._id,
         app_type: appType?.value || null,
         app_type_name: appType?.name || null,
+        aws_region: region,
         environment_id: environment._id,
         application_name: `${app.name}-${environment.environment}`
           .toLowerCase()
